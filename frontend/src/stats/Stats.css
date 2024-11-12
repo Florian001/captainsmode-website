@@ -1,0 +1,17 @@
+
+
+.stats-table {
+    
+}
+
+.td-global-stat-worst {
+    color: red;
+}
+
+.td-global-stat-best {
+    color: green;
+}
+
+.selected {
+    background-color: #f0f0f0; /* or any color you like */
+}
