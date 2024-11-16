@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/../database-migration/script.sql" dialect="PostgreSQL" />
+    <file url="file://$USER_HOME$/work/Tierschutz/teo/databaseStaging/postgres_localhost-2024_11_16_15_50_50-dump.sql" dialect="PostgreSQL" />
+    <file url="file:///usr/bin/pg_dump" dialect="PostgreSQL" />
+  </component>
+</project>
