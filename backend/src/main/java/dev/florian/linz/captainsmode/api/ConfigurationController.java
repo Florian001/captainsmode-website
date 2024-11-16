@@ -49,7 +49,9 @@ public class ConfigurationController {
     @PostMapping("syncWithApi/{playerName}")
     @Transactional
     public void syncWithApi(@PathVariable String playerName) {
+        log.info("Sync with api started for player {}", playerName);
         List<String> matchHistory = lolApiService.lastGames(playerService.getPlayerByName(playerName)).reversed();
+        log.info("Receiced a list of the last 5 games");
         for (String potentialNewGame : matchHistory) {
             try {
                 gameService.insertGame(potentialNewGame);
