@@ -1,5 +1,6 @@
 package dev.florian.linz.captainsmode.game;
 
+import dev.florian.linz.captainsmode.api.ConfigurationController;
 import dev.florian.linz.captainsmode.api.GameResponse;
 import dev.florian.linz.captainsmode.api.LolApiService;
 import static dev.florian.linz.captainsmode.game.GameMapper.ENEMY;
@@ -17,11 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GameService extends BaseService {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationController.class);
     
     private final LolApiService lolApiService;
     
@@ -83,13 +87,16 @@ public class GameService extends BaseService {
 
     public Game insertGame(String matchId) {
         if (gameRepository.existsGameByMatchId(matchId)) {
+            log.info("Game already exists");
             throw new BadRequestException(ErrorCode.MATCH_ALREADY_EXISTS, matchId + " already exists");
         }
         
         GameResponse apiResponse = lolApiService.getMatchData(matchId);
         if (!apiResponse.info().gameMode().equals("CLASSIC")) {
+            log.info("Unsupported game mode");
             throw new BadRequestException(ErrorCode.UNSUPPORTED_GAME_MODE, "Unsupported game mode");
         }
+        log.info("Adding new game");
         int nextGameNumber = getNextGameNumber();
         Game newGame = new Game(nextGameNumber);
         gameMapper.mapGame(newGame, apiResponse);

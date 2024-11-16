@@ -41,9 +41,12 @@ public class LolApiService extends BaseService {
     public GameResponse getMatchData(String apiGameId) {
         String apiKey = settingsRepository.findAll().getFirst().getApiKey();
         String gameUrl = BASE_URL + "/lol/match/v5/matches/%s?api_key=%s".formatted(apiGameId, apiKey);
+        log.info("Getting Match from riot api");
         ResponseEntity<GameResponse> response = restTemplate.getForEntity(gameUrl, GameResponse.class);
+        log.info("Match fetched..");
         assert response.getBody() != null;
         assert response.getStatusCode().is2xxSuccessful();
+        log.info("successfully");
         return response.getBody();
     }
 
