@@ -113,6 +113,7 @@ const DetailsPage = () => {
                 headers: {
                     'Content-Type': 'application/json',
                     "ngrok-skip-browser-warning": true,
+                    "Authorization": "Basic " + btoa(localStorage.getItem("username") + ":" + localStorage.getItem("password"))
                 },
                 body: JSON.stringify(request), // Convert the data to a JSON string
             });
