@@ -6,6 +6,7 @@ const SettingsMainPage = () => {
     // State to store the selected radio button value
     const [selectedOption, setSelectedOption] = useState('');
     const [textFieldValue, setTextFieldValue] = useState('');
+    const [deleteGameNumber, setDeleteGameNumber] = useState('');
 
     const triggerSynchronisation = async () => {
         try {
@@ -40,6 +41,20 @@ const SettingsMainPage = () => {
             console.error('Error fetching row data:', error);
         }
     };
+
+    const deleteGame = async (gameNumber) => {
+        try {
+            await fetch(baseUrl + `api/v1/games/${gameNumber}`, {
+                method: "delete",
+                headers: new Headers({
+                    "Content-Type" : "application/json",
+                    "Authorization": "Basic " + btoa(localStorage.getItem("username") + ":" + localStorage.getItem("password"))
+                }),
+            });
+        } catch (error) {
+            console.error('Error fetching row data:', error);
+        }
+    };
     
     // Function to handle the radio button change
     const handleRadioChange = (event) => {
@@ -50,6 +65,10 @@ const SettingsMainPage = () => {
         setTextFieldValue(event.target.value);
     };
 
+    const handleDeleteGameInputChange = (event) => {
+        setDeleteGameNumber(event.target.value);
+    };
+
     // Function to handle the button click
     const handleSyncButtonClick = () => {
         // Trigger the function with the selected radio button value
@@ -57,8 +76,12 @@ const SettingsMainPage = () => {
     };
 
     const handleApiKeyButtonClick = () => {
-        
         addApiKey();
+    };
+
+    const handleDeleteGameButtonClick = () => {
+        
+        deleteGame(deleteGameNumber);
     };
     
     return (
@@ -112,6 +135,17 @@ const SettingsMainPage = () => {
                     placeholder="Api key"
                 />
                 <button onClick={handleApiKeyButtonClick}>Insert Api key</button>
+            </div>
+
+            <div>
+                <h3>Delete Game</h3>
+                <input
+                    type="text"
+                    value={deleteGameNumber}
+                    onChange={handleDeleteGameInputChange}
+                    placeholder="Delete Game"
+                />
+                <button onClick={handleDeleteGameButtonClick}>Delete Game</button>
             </div>
         </div>
 

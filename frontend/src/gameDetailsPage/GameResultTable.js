@@ -1,4 +1,5 @@
 import React from 'react';
+import {dataDragonVersion} from "../GlobalContext";
 
 const GameResultTable = ({ gameResultTableData }) => {
 
@@ -30,7 +31,7 @@ const GameResultTable = ({ gameResultTableData }) => {
                 return <tr>
                     <td>
                         <img
-                            src={`https://ddragon.leagueoflegends.com/cdn/14.14.1/img/champion/${gameResultTableData[role]["obleute"].championName}.png`}
+                            src={`https://ddragon.leagueoflegends.com/cdn/${dataDragonVersion}/img/champion/${gameResultTableData[role]["obleute"].championName}.png`}
                             alt={gameResultTableData[role]["obleute"].championName}
                             className="icon"/>
                     </td>
@@ -68,7 +69,7 @@ const GameResultTable = ({ gameResultTableData }) => {
                     </td>
                     <td>
                         <img
-                            src={`https://ddragon.leagueoflegends.com/cdn/14.14.1/img/champion/${gameResultTableData[role]["enemy"].championName}.png`}
+                            src={`https://ddragon.leagueoflegends.com/cdn/${dataDragonVersion}/img/champion/${gameResultTableData[role]["enemy"].championName}.png`}
                             alt={gameResultTableData[role]["enemy"].championName}
                             className="icon"/>
                     </td>

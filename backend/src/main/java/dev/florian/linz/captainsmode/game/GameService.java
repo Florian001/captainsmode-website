@@ -9,6 +9,7 @@ import dev.florian.linz.captainsmode.game.generalStats.GetNumberStatResponse;
 import dev.florian.linz.captainsmode.game.generalStats.GetStatsResponse;
 import dev.florian.linz.captainsmode.game.generalStats.GetStringStatOfPlayer;
 import dev.florian.linz.captainsmode.game.generalStats.GetStringStatsResponse;
+import dev.florian.linz.captainsmode.goldenChamp.GoldenChampService;
 import dev.florian.linz.captainsmode.player.Player;
 import dev.florian.linz.captainsmode.player.PlayerRepository;
 import dev.florian.linz.captainsmode.rest.error.BadRequestException;
@@ -20,28 +21,32 @@ import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GameService extends BaseService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationController.class);
+
+    @Value("#{'${lol.api.excluded.games}'.split(',')}")
+    private List<String> excludedGameIds;
     
     private final LolApiService lolApiService;
-    
     private final GameRepository gameRepository;
-
     private final StatService statService;
+    private final GoldenChampService goldenChampService;
     
     private final GameMapper gameMapper;
     private final PlayerRepository playerRepository;
 
-    public GameService(LolApiService lolApiService, GameRepository gameRepository, GameMapper gameMapper, PlayerRepository playerRepository, StatService statService) {
+    public GameService(LolApiService lolApiService, GameRepository gameRepository, GameMapper gameMapper, PlayerRepository playerRepository, StatService statService, GoldenChampService goldenChampService) {
         this.lolApiService = lolApiService;
         this.gameRepository = gameRepository;
         this.gameMapper = gameMapper;
         this.playerRepository = playerRepository;
         this.statService = statService;
+        this.goldenChampService = goldenChampService;
     }
     
     public List<MinimumGameResponse> getGames() {
@@ -91,6 +96,11 @@ public class GameService extends BaseService {
             throw new BadRequestException(ErrorCode.MATCH_ALREADY_EXISTS, matchId + " already exists");
         }
         
+        if (excludedGameIds.contains(matchId)) {
+            log.info("Game is on blacklist");
+            throw new BadRequestException(ErrorCode.MATCH_IS_BLACKLISTED, matchId + " is on blacklist");
+        }
+        
         GameResponse apiResponse = lolApiService.getMatchData(matchId);
         if (!apiResponse.info().gameMode().equals("CLASSIC")) {
             log.info("Unsupported game mode");
@@ -100,7 +110,11 @@ public class GameService extends BaseService {
         int nextGameNumber = getNextGameNumber();
         Game newGame = new Game(nextGameNumber);
         gameMapper.mapGame(newGame, apiResponse);
-        return gameRepository.save(newGame);
+        gameRepository.save(newGame);
+        
+        goldenChampService.processGoldenChamp(newGame);
+        
+        return newGame;
     }
 
     private int getNextGameNumber() {

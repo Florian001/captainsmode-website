@@ -73,6 +73,7 @@ const OverviewTable = () => {
                 method: "put",
                 headers: new Headers({
                     "ngrok-skip-browser-warning": true,
+                    "Authorization": "Basic " + btoa(localStorage.getItem("username") + ":" + localStorage.getItem("password"))
                 }),
             });
 
@@ -91,6 +92,7 @@ const OverviewTable = () => {
                 method: "get",
                 headers: new Headers({
                     "ngrok-skip-browser-warning": true,
+                    "Authorization": "Basic " + btoa(localStorage.getItem("username") + ":" + localStorage.getItem("password"))
                 }),
             });
             const data = await response.json();

@@ -28,9 +28,7 @@ public class LolApiService extends BaseService {
     }
 
     public List<String> lastGames(Player player) {
-        log.info("Fetching api key from database");
         String apiKey = settingsRepository.findAll().getFirst().getApiKey();
-        log.info("Received api key from database: {}", apiKey);
         String url = BASE_URL + "/lol/match/v5/matches/by-puuid/%s/ids?queue=440&start=0&count=5&api_key=%s".formatted(player.getPuuid(), apiKey);
         ResponseEntity<String[]> response = restTemplate.getForEntity(url, String[].class);
         log.info("Response of riot api successfull");

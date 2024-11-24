@@ -1,4 +1,4 @@
-package dev.florian.linz.captainsmode.game;
+package dev.florian.linz.captainsmode.api;
 
 public record AddApiRequest(
     String apiKey) {

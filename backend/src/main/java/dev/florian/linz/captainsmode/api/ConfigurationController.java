@@ -1,17 +1,13 @@
 package dev.florian.linz.captainsmode.api;
 
 
-import dev.florian.linz.captainsmode.game.AddApiRequest;
 import dev.florian.linz.captainsmode.game.GameService;
+import dev.florian.linz.captainsmode.goldenChamp.GoldenChampService;
 import dev.florian.linz.captainsmode.player.PlayerService;
 import dev.florian.linz.captainsmode.rest.error.BadRequestException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,28 +26,25 @@ public class ConfigurationController {
     public static final String BASE_URL = "/api/v1/";
     
     private static final Logger log = LoggerFactory.getLogger(ConfigurationController.class);
-//    private JwtUtil jwtUtil = new JwtUtil();
-    private String correctPassword = "your-password";
     
     private final GameService gameService;
-
     private final PlayerService playerService;
-    
     private final LolApiService lolApiService;
+    private final GoldenChampService goldenChampService;
 
-    public ConfigurationController(GameService gameService, PlayerService playerService, LolApiService lolApiService) {
+    public ConfigurationController(GameService gameService, PlayerService playerService, LolApiService lolApiService, GoldenChampService goldenChampService) {
         this.gameService = gameService;
         this.playerService = playerService;
         this.lolApiService = lolApiService;
+        this.goldenChampService = goldenChampService;
     }
 
     
     @PostMapping("syncWithApi/{playerName}")
     @Transactional
     public void syncWithApi(@PathVariable String playerName) {
-        log.info("Sync with api started for player {}", playerName);
+        
         List<String> matchHistory = lolApiService.lastGames(playerService.getPlayerByName(playerName)).reversed();
-        log.info("Receiced a list of the last 5 games");
         for (String potentialNewGame : matchHistory) {
             try {
                 gameService.insertGame(potentialNewGame);
@@ -72,17 +65,5 @@ public class ConfigurationController {
     public void deleteGame(@PathVariable Long matchNumber) {
         gameService.deleteGame(matchNumber);
     }
-
-//    @PostMapping("login")
-//    public ResponseEntity<?> login(@RequestBody Map<String, String> loginData) {
-//        String password = loginData.get("password");
-//
-//        if (correctPassword.equals(password)) {
-//            String token = jwtUtil.generateToken("user"); // You can add more details as required
-//            return ResponseEntity.ok(Collections.singletonMap("token", token));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password");
-//        }
-//    }
     
 }

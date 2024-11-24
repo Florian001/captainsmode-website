@@ -1,4 +1,5 @@
 import React from 'react';
+import {dataDragonVersion} from "../GlobalContext";
 
 const TableHeader = ({ players, participations }) => {
     const playersInParticipations = participations.filter(item => item !== null).map(item => item.player.name);
@@ -14,7 +15,7 @@ const TableHeader = ({ players, participations }) => {
                          className="th-game-stat-icon-pos"/>
                     {player.name}
                     <img
-                        src={`https://ddragon.leagueoflegends.com/cdn/14.14.1/img/champion/${participations[index].championName}.png`}
+                        src={`https://ddragon.leagueoflegends.com/cdn/${dataDragonVersion}/img/champion/${participations[index].championName}.png`}
                         alt={participations[index].championName}
                         className="th-game-stat-icon-champ"/>
                 </th>

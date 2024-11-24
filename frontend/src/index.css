@@ -16,6 +16,10 @@ body {
   background: orangered;
 }
 
+.goldenChampOverviewTable {
+  background: grey;
+}
+
 .overview-td {
   min-width: 20ch;
   font-size: 18px;
@@ -36,6 +40,16 @@ body {
 .icon {
   height: 3ch;
   align-items: start ;
+}
+
+.iconGoldenChampAvailable {
+  height: 10ch;
+}
+
+.iconGoldenChampNotAvailable {
+  height: 10ch;
+  filter: grayscale(200%);
+  opacity: 30%;
 }
 
 .goldAdvantage {
