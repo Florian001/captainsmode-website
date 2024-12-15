@@ -5,7 +5,8 @@ import MyBarChart from "../util/MyBarChart";
 
 
 
-const GlobalStats = ({statType}) => {
+
+const GlobalStats = ({statType, dateFrom, dateTo}) => {
 
     const [players, setPlayers] = useState([]);
     const [stats, setStats] = useState([]);
@@ -51,27 +52,35 @@ const GlobalStats = ({statType}) => {
 
         // Fetch row data
         const fetchRowData = async () => {
+            console.log("dateFrom: " + dateFrom + " dateTo: " + dateTo + " statType: " + statType);
+            if (!dateFrom || !dateTo) return;
             try {
-                const response = await fetch(baseUrl + 'api/v1/games/stats/' + statType, {
+                const response = await fetch(baseUrl + `api/v1/games/stats/${statType}?dateFrom=${dateFrom.toISOString().split("T")[0]}&dateTo=${dateTo.toISOString().split("T")[0]}`, {
                     method: "get",
                     headers: new Headers({
                         "ngrok-skip-browser-warning": true,
                         "Authorization": "Basic " + btoa(localStorage.getItem("username") + ":" + localStorage.getItem("password"))
                     }),
                 });
-                const data = await response.json();
-                setStats(data);
+                if (response.status === 400) {
+                    console.log("Fetching data results in Bad Request");
+                    alert("Datumsanzeige ist quatsch");
+                } else {
+                    const data = await response.json();
+                    setStats(data);
+                }
             } catch (error) {
                 console.error('Error fetching row data:', error);
             }
         };
-
+        
+        fetchRowData(dateFrom, dateTo);
         fetchPlayers();
-        fetchRowData();
-    }, []);
-    
-    console.log("stats");
-    console.log(stats);
+
+    }, [dateFrom, dateTo]);
+
+
+
     return (<div>
     <table className="stat-table-number-of-games">
         <thead>
@@ -101,7 +110,6 @@ const GlobalStats = ({statType}) => {
         </tbody>
     </table>
         {selectedRowData !== null && <MyPieChart data={selectedRowData} />}
-            
             { selectedRowData !== null && <MyBarChart data={selectedRowData} />}
         </div>
     );

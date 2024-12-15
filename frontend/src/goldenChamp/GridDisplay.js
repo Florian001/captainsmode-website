@@ -22,6 +22,7 @@ const GridDisplay = ({ data, all, open }) => {
     return (<div>
             <h2>Liste der möglichen goldenen Champions</h2>
             <p>Noch potentiell goldene Champions: {open} / {all} ({(open*100/all).toFixed(2)} %) </p>
+            <p>Wahrscheinlichkeit, den goldenen Champ zu picken, wenn man 5 neue Champs wählt: {(5*100/open).toFixed(2)} % </p>
         <table className={"goldenChampOverviewTable"}>
             {rows}
         </table>

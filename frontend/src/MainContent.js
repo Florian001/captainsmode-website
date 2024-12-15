@@ -6,6 +6,10 @@ import StatsMainPage from "./stats/StatsMainPage";
 import GoldenChampMainPage from "./goldenChamp/GoldenChampMainPage";
 import SettingsMainPage from "./settings/SettingsMainPage";
 import StartPage from "./StartPage";
+import InsertAnswer from "./quiz/InsertAnswer";
+import InsertQuestion from "./quiz/InsertQuestion";
+import QuizDisplay from "./quiz/QuizDisplay";
+import Quiz from "./quiz/Quiz";
 
 
 const MainContent = () => {
@@ -18,6 +22,9 @@ const MainContent = () => {
                 <Route path="/settings" element={<SettingsMainPage />} />
                 <Route exact path="/overview" element={<OverviewPage />}/>
                 <Route path="/details/:id" element={<DetailsPage />}/>
+                <Route path="/quiz/answers" element={<InsertAnswer />}/>
+                <Route path="/quiz/insert-question" element={<InsertQuestion />}/>
+                <Route path="/quiz" element={<Quiz />}/>
             </Routes>
         </div>
     );

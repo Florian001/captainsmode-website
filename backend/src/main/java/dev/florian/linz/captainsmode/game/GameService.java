@@ -15,6 +15,7 @@ import dev.florian.linz.captainsmode.player.PlayerRepository;
 import dev.florian.linz.captainsmode.rest.error.BadRequestException;
 import dev.florian.linz.captainsmode.rest.error.ErrorCode;
 import dev.florian.linz.captainsmode.utils.BaseService;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -167,55 +168,58 @@ public class GameService extends BaseService {
         }
     }
 
-    public List<GetStatsResponse> getStats(StatsType statsType) {
+    public List<GetStatsResponse> getStats(StatsType statsType, LocalDate dateFrom, LocalDate dateTo) {
+        if (gameRepository.getNumberOfGamesTotal(dateFrom, dateTo) == 0) {
+            throw new BadRequestException(ErrorCode.DATE_ERROR, "No matches found for this date range");
+        }
         return switch (statsType) {
-            case GENERAL -> getGeneralStats();
-            case CAPTAIN -> getCaptainStats();
-            case KDA -> getKDAStats();
-            case CS -> getCSStats();
-            case DAMAGE -> getDamageStats();
+            case GENERAL -> getGeneralStats(dateFrom, dateTo);
+            case CAPTAIN -> getCaptainStats(dateFrom, dateTo);
+            case KDA -> getKDAStats(dateFrom, dateTo);
+            case CS -> getCSStats(dateFrom, dateTo);
+            case DAMAGE -> getDamageStats(dateFrom, dateTo);
         };
     }
 
-    private List<GetStatsResponse> getGeneralStats() {
+    private List<GetStatsResponse> getGeneralStats(LocalDate dateFrom, LocalDate dateTo) {
         
         List<GetStatsResponse> stats = new ArrayList<>();
         
-        stats.add(mapNumbersRepoResponse(gameRepository.getNumberOfGamesPerPlayer(), "Spiele", true, false, false));
-        stats.add(mapNumbersRepoResponse(gameRepository.getNumberOfWins(), "Siege", true, false, false));
-        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getNumberOfWins(), gameRepository.getNumberOfGamesPerPlayer(), "Winrate", true, true, false));
-        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getNumberOfGamesPerPlayer(), gameRepository.getNumberOfGamesTotal(), "Gameparticipation", true, true, false));
+        stats.add(mapNumbersRepoResponse(gameRepository.getNumberOfGamesPerPlayer(dateFrom, dateTo), "Spiele", true, false, false));
+        stats.add(mapNumbersRepoResponse(gameRepository.getNumberOfWins(dateFrom, dateTo), "Siege", true, false, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getNumberOfWins(dateFrom, dateTo), gameRepository.getNumberOfGamesPerPlayer(dateFrom, dateTo), "Winrate", true, true, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getNumberOfGamesPerPlayer(dateFrom, dateTo), gameRepository.getNumberOfGamesTotal(dateFrom, dateTo), "Gameparticipation", true, true, false));
         stats.add(mapNumbersRepoResponse(gameRepository.getParticipationLast20Games(), "Gameparticipation letzte 20 Spiele", true, true, false));
         return stats;
     }
 
-    private List<GetStatsResponse> getCaptainStats() {
+    private List<GetStatsResponse> getCaptainStats(LocalDate dateFrom, LocalDate dateTo) {
 
         List<GetStatsResponse> stats = new ArrayList<>();
 
-        stats.add(mapNumbersRepoResponse(statService.getNumberOfCaptains(), "Anzahl Captain", true, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getNumberOfCaptainWins(), "Anzahl Captainsiege", true, false, false));
-        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptainWins(), statService.getNumberOfCaptains(), "Captain winrate", true, true, false));
-        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptains(), gameRepository.getNumberOfGamesPerPlayer(), "Als Captain teilgenommen", true, true, false));
-        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptains(), gameRepository.getNumberOfGamesTotal(), "Captainanteil an allen Spielen", true, true, false));
-        stats.add(mapNumbersRepoResponse(statService.getAverageTeamCCVIfCaptain(),"Ø Team-CCV als Captain", true, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getBestTeamCCVIfCaptain(),"Bestes Captainspiel (Team-CCV)", true, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getBestTeamCCVIfCaptainGameNumber(),"  -> in Spiel", null, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getWorstTeamCCVIfCaptain(),"Bestes Captainspiel (Team-CCV)", true, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getWorstTeamCCVIfCaptainGameNumber(),"  -> in Spiel", null, false, false));
-        stats.add(mapStringRepoResponse(statService.getAverageGameLengthAsCaptain(),"Ø Spielzeit als Captain",false));
+        stats.add(mapNumbersRepoResponse(statService.getNumberOfCaptains(dateFrom, dateTo), "Anzahl Captain", true, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getNumberOfCaptainWins(dateFrom, dateTo), "Anzahl Captainsiege", true, false, false));
+        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptainWins(dateFrom, dateTo), statService.getNumberOfCaptains(dateFrom, dateTo), "Captain winrate", true, true, false));
+        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptains(dateFrom, dateTo), gameRepository.getNumberOfGamesPerPlayer(dateFrom, dateTo), "Als Captain teilgenommen", true, true, false));
+        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptains(dateFrom, dateTo), gameRepository.getNumberOfGamesTotal(dateFrom, dateTo), "Captainanteil an allen Spielen", true, true, false));
+        stats.add(mapNumbersRepoResponse(statService.getAverageTeamCCVIfCaptain(dateFrom, dateTo),"Ø Team-CCV als Captain", true, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getBestTeamCCVIfCaptain(dateFrom, dateTo),"Bestes Captainspiel (Team-CCV)", true, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getBestTeamCCVIfCaptainGameNumber(dateFrom, dateTo),"  -> in Spiel", null, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getWorstTeamCCVIfCaptain(dateFrom, dateTo),"Schlechtestes Captainspiel (Team-CCV)", true, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getWorstTeamCCVIfCaptainGameNumber(dateFrom, dateTo),"  -> in Spiel", null, false, false));
+        stats.add(mapStringRepoResponse(statService.getAverageGameLengthAsCaptain(dateFrom, dateTo),"Ø Spielzeit als Captain in Minuten",false));
 
        return stats;
     }
 
-    private List<GetStatsResponse> getKDAStats() {
+    private List<GetStatsResponse> getKDAStats(LocalDate dateFrom, LocalDate dateTo) {
 
         List<GetStatsResponse> stats = new ArrayList<>();
 
-        stats.add(mapNumbersRepoResponse(statService.getAverageKillsPerPlayer(), "Ø Kills", true, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getAverageDeathsPerPlayer(), "Ø Deaths", false, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getAverageAssistsPerPlayer(), "Ø Assists", true, false, false));
-//        stats.add(mapNumbersRepoResponse(statService.getAverageCCVPerPlayer(), "Ø ccv", true, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getAverageKillsPerPlayer(dateFrom, dateTo), "Ø Kills", true, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getAverageDeathsPerPlayer(dateFrom, dateTo), "Ø Deaths", false, false, false));
+        stats.add(mapNumbersRepoResponse(statService.getAverageAssistsPerPlayer(dateFrom, dateTo), "Ø Assists", true, false, false));
+//        stats.add(mapNumbersRepoResponse(statService.getAverageCCVPerPlayer(dateFrom, dateTo), "Ø ccv", true, false, false));
 //        stats.add(mapNumbersRepoResponse(statService.getAverageCCVOnWinsPerPlayer(), "Ø ccv bei Sieg", true, false, false));
 //        stats.add(mapNumbersRepoResponse(statService.getAverageCCVOnLossesPerPlayer(), "Ø ccv bei Loss", true, false, false));
         
@@ -331,11 +335,11 @@ public class GameService extends BaseService {
         return new GetStringStatsResponse(displayName, playerStats);
     }
     
-    private List<GetStatsResponse> getCSStats() {
+    private List<GetStatsResponse> getCSStats(LocalDate dateFrom, LocalDate dateTo) {
         return null;
     }
 
-    private List<GetStatsResponse> getDamageStats() {
+    private List<GetStatsResponse> getDamageStats(LocalDate dateFrom, LocalDate dateTo) {
         return null;
     }
 }

@@ -80,7 +80,6 @@ const SettingsMainPage = () => {
     };
 
     const handleDeleteGameButtonClick = () => {
-        
         deleteGame(deleteGameNumber);
     };
     

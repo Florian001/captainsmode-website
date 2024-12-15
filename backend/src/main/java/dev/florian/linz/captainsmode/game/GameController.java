@@ -5,9 +5,12 @@ import dev.florian.linz.captainsmode.api.LolApiService;
 import dev.florian.linz.captainsmode.game.generalStats.GetStatsResponse;
 import dev.florian.linz.captainsmode.player.PlayerService;
 import dev.florian.linz.captainsmode.rest.error.BadRequestException;
+import dev.florian.linz.captainsmode.rest.error.ErrorCode;
+import java.time.LocalDate;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -95,7 +99,16 @@ public class GameController {
 
     @GetMapping("/stats/{statsType}")
     @Transactional(readOnly = true)
-    public ResponseEntity<List<GetStatsResponse>> getGames(@PathVariable StatsType statsType) {
-        return new ResponseEntity<>(gameService.getStats(statsType), HttpStatus.OK);
+    public ResponseEntity<List<GetStatsResponse>> getGames(
+        @PathVariable StatsType statsType,
+        @RequestParam(name = "dateFrom", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+        @RequestParam(name = "dateTo", required = false)  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo) {
+        
+        LocalDate dateFromInclusive = dateFrom == null ? LocalDate.of(2000, 1, 1) : dateFrom;
+        LocalDate dateToInclusive = dateFrom == null ? LocalDate.of(2100, 1, 1) : dateTo;
+        if (dateFromInclusive.isAfter(dateTo)) {
+            throw new BadRequestException(ErrorCode.DATE_ERROR, "Date from is after date to");
+        }
+        return new ResponseEntity<>(gameService.getStats(statsType, dateFromInclusive, dateToInclusive), HttpStatus.OK);
     }
 }

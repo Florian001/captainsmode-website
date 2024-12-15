@@ -8,4 +8,5 @@ public enum ErrorCode {
     NOW_ENOUGH_PLAYERS,
     ENTITY_NOT_FOUND,
     DESCRIPTION_EMPTY,
+    DATE_ERROR
 }

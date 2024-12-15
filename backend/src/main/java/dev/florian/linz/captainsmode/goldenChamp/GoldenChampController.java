@@ -49,4 +49,10 @@ public class GoldenChampController {
     public ResponseEntity<GoldenChampOverviewResponse> getGoldenChampOverview() {
         return new ResponseEntity<>(goldenChampService.getGoldenChampOverview(), HttpStatus.OK);
     }
+
+    @GetMapping("/random-wrong-champ")
+    @Transactional
+    public ResponseEntity<String> addRandomWrongChamp() {
+        return new ResponseEntity<>(goldenChampService.addRandomWrongChampion(), HttpStatus.OK);
+    }
 }

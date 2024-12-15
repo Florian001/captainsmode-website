@@ -3,7 +3,9 @@ package dev.florian.linz.captainsmode.game;
 import dev.florian.linz.captainsmode.game.generalStats.StatWithNumberImplementation;
 import dev.florian.linz.captainsmode.game.generalStats.StatWithStringValueImplementation;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import org.jooq.SelectFieldOrAsterisk;
+import org.jooq.impl.DSL;
 import static org.jooq.impl.DSL.*;
 import dev.florian.linz.captainsmode.utils.BaseService;
 
@@ -90,48 +92,57 @@ public class StatService extends BaseService {
         this.enhancedParticipationTable = getEnhancedParticipationTable();
     }
     
-    public List<GameRepository.StatWithNumber> getNumberOfCaptains() {
+    public List<GameRepository.StatWithNumber> getNumberOfCaptains(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(captain.as("name"), count(captain).as("number"))
             .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(field("captain"), field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-    public List<GameRepository.StatWithNumber> getNumberOfCaptainWins() {
+    public List<GameRepository.StatWithNumber> getNumberOfCaptainWins(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(captain.as("name"), count(captain).as("number"))
             .from(enhancedGameTable)
-            .where(win.eq(true))
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
+            .and(win.eq(true))
             .groupBy(captain, field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .fetchInto(StatWithNumberImplementation.class);
     }
     
-    public List<GameRepository.StatWithNumber> getAverageTeamCCVIfCaptain() {
+    public List<GameRepository.StatWithNumber> getAverageTeamCCVIfCaptain(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(captain.as("name"), avg(enhancedGameTable.field("teamCCV", BigDecimal.class)).as("number"))
             .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(captain, field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .fetchInto(StatWithNumberImplementation.class);
     }
     
-    public List<GameRepository.StatWithNumber> getBestTeamCCVIfCaptain() {
+    public List<GameRepository.StatWithNumber> getBestTeamCCVIfCaptain(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(captain.as("name"), max(enhancedGameTable.field("teamCCV", BigDecimal.class)).as("number"))
             .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(captain, field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-    public List<GameRepository.StatWithNumber> getBestTeamCCVIfCaptainGameNumber() {
+    public List<GameRepository.StatWithNumber> getBestTeamCCVIfCaptainGameNumber(LocalDate dateFrom, LocalDate dateTo) {
         
         Table<?> maxCCV = context.select(captain.as("name"), max(enhancedGameTable.field("teamCCV", BigDecimal.class)).as("number"))
             .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(captain, field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .asTable("max_ccv");
         
-        Table<?> enhancedGameTableTwo = context.select().from(enhancedGameTable).asTable("egt");
+        Table<?> enhancedGameTableTwo = context
+            .select()
+            .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
+            .asTable("egt");
         
         return context.select(captain.as("name"), max(field("egt.number")).as("number"))
             .from(enhancedGameTableTwo)
@@ -142,23 +153,29 @@ public class StatService extends BaseService {
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-    public List<GameRepository.StatWithNumber> getWorstTeamCCVIfCaptain() {
+    public List<GameRepository.StatWithNumber> getWorstTeamCCVIfCaptain(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(captain.as("name"), min(enhancedGameTable.field("teamCCV", BigDecimal.class)).as("number"))
             .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(captain, field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-    public List<GameRepository.StatWithNumber> getWorstTeamCCVIfCaptainGameNumber() {
+    public List<GameRepository.StatWithNumber> getWorstTeamCCVIfCaptainGameNumber(LocalDate dateFrom, LocalDate dateTo) {
 
         Table<?> maxCCV = context.select(captain.as("name"), min(enhancedGameTable.field("teamCCV", BigDecimal.class)).as("number"))
             .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(captain, field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .asTable("max_ccv");
 
-        Table<?> enhancedGameTableTwo = context.select().from(enhancedGameTable).asTable("egt");
+        Table<?> enhancedGameTableTwo = context
+            .select()
+            .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
+            .asTable("egt");
 
         return context.select(captain.as("name"), max(field("egt.number")).as("number"))
             .from(enhancedGameTableTwo)
@@ -169,45 +186,53 @@ public class StatService extends BaseService {
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-    public List<GameRepository.StatWithStringValue> getAverageGameLengthAsCaptain() {
+    public List<GameRepository.StatWithStringValue> getAverageGameLengthAsCaptain(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(captain.as("name"), avg(enhancedGameTable.field("duration", BigDecimal.class)).as("number"))
             .from(enhancedGameTable)
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(captain, field(PLAYERORDER))
             .orderBy(field(PLAYERORDER))
             .fetchInto(StatWithStringValueImplementation.class);
     }
 
-    public List<GameRepository.StatWithNumber> getAverageKillsPerPlayer() {
+    public List<GameRepository.StatWithNumber> getAverageKillsPerPlayer(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(playerName.as("name"), avg(kills).as("number"))
             .from(participationTable)
             .leftJoin(playerTable).on(field("game_participation.player_id").eq(playerId))
+            .leftJoin(gameTable).on(field("game_participation.game_id").eq(gameId))
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(playerName, playerPlayerOrder)
             .orderBy(playerPlayerOrder)
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-    public List<GameRepository.StatWithNumber> getAverageDeathsPerPlayer() {
+    public List<GameRepository.StatWithNumber> getAverageDeathsPerPlayer(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(playerName.as("name"), avg(deaths).as("number"))
             .from(participationTable)
             .leftJoin(playerTable).on(field("game_participation.player_id").eq(playerId))
+            .leftJoin(gameTable).on(field("game_participation.game_id").eq(gameId))
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(playerName, playerPlayerOrder)
             .orderBy(playerPlayerOrder)
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-    public List<GameRepository.StatWithNumber> getAverageAssistsPerPlayer() {
+    public List<GameRepository.StatWithNumber> getAverageAssistsPerPlayer(LocalDate dateFrom, LocalDate dateTo) {
         return context.select(playerName.as("name"), avg(assists).as("number"))
             .from(participationTable)
             .leftJoin(playerTable).on(field("game_participation.player_id").eq(playerId))
+            .leftJoin(gameTable).on(field("game_participation.game_id").eq(gameId))
+            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
             .groupBy(playerName, playerPlayerOrder)
             .orderBy(playerPlayerOrder)
             .fetchInto(StatWithNumberImplementation.class);
     }
 
-//    public List<GameRepository.StatWithNumber> getAverageCCVPerPlayer() {
+//    public List<GameRepository.StatWithNumber> getAverageCCVPerPlayer(LocalDate dateFrom, LocalDate dateTo) {
 //        return context.select(playerName.as("name"), avg(field("enhancedParticipationTable.ccv", BigDecimal.class)).as("number"))
 //            .from(enhancedParticipationTable)
 //            .leftJoin(playerTable).on(field("enhancedParticipationTable.player_id").eq(playerId))
+//            .where(DSL.field("date", LocalDate.class).between(dateFrom, dateTo))
 //            .groupBy(playerName, playerPlayerOrder)
 //            .orderBy(playerPlayerOrder)
 //            .fetchInto(StatWithNumberImplementation.class);
@@ -234,11 +259,30 @@ public class StatService extends BaseService {
 //    }
 
     private Table<?> getEnhancedParticipationTable() {
-        return context.select(enhancedGameTable.fields())
-            .select(ccvValue.as("ccv"))
-            .from(participationTable)
-            .leftJoin(enhancedGameTable).on(field("game_participation.game_id", Long.class).eq(field("enhancedGameTable.id",Long.class)))
-            .asTable("enhancedParticipationTable");
+        
+//        return context.select(enhancedGameTable.fields())
+//            .select(ccvValue.as("ccv"))
+//            .from(participationTable)
+//            .leftJoin(enhancedGameTable).on(field("game_participation.game_id", Long.class).eq(field("enhancedGameTable.id",Long.class)))
+//            .asTable("enhancedParticipationTable");
+
+//        return context.select(enhancedGameTable.fields())
+//            .select(ccvValue.as("ccv"))
+//            .from(participationTable)
+//            .leftJoin(enhancedGameTable)
+//            .on(DSL.field("game_id", Long.class)
+//                .eq(DSL.field("egt_id", Long.class)))
+//            .asTable("enhancedParticipationTable");
+
+//        
+//        return context.select(enhancedGameTable.fields())
+//            .select(ccvValue.as("ccv"))
+//            .from(participationTable)
+//            .leftJoin(enhancedGameTable)
+//            .on(participationTable.field("game_id", Long.class)
+//                .eq(enhancedGameTable.field("id", Long.class)))
+//            .asTable("enhancedParticipationTable");
+return null;
     }
     
     private Table<?> getEnhancedGameTable() {

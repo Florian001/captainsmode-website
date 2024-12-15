@@ -107,11 +107,12 @@ public class GoldenChampService extends BaseService {
         return null;
     }
     
-    private void addRandomAdditionalChampToWrongChamps(GoldenChampion entry) {
+    private String addRandomAdditionalChampToWrongChamps(GoldenChampion entry) {
         String additionalChampToRemove = getRandomNotGoldenChampion(entry);
         if (additionalChampToRemove != null) {
             entry.addWrongChampions(List.of(additionalChampToRemove));
         }
+        return additionalChampToRemove;
     }
 
     private boolean checkIfGoldenChampWasPicked(Game newGame, GoldenChampion entry) {
@@ -136,5 +137,15 @@ public class GoldenChampService extends BaseService {
         return new GoldenChampOverviewResponse(
             goldenChampRepository.getOverview()
         );
+    }
+
+    public String addRandomWrongChampion() {
+        List<GoldenChampion> entries = goldenChampRepository.getCurrentGoldenChampRow();
+        if (entries.size() != 1) {
+            throw new IllegalStateException("There should be exactly one row with a not-yet-found golden champion");
+        } else {
+            GoldenChampion entry = entries.getFirst();
+            return addRandomAdditionalChampToWrongChamps(entry);
+        }
     }
 }

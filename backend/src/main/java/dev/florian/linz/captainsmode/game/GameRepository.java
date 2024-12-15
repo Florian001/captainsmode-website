@@ -1,5 +1,6 @@
 package dev.florian.linz.captainsmode.game;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +38,12 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     SELECT gp.player.playerOrder, gp.player.name as name, COUNT(*) as number
     from GameParticipation gp
     WHERE gp.game.win = true
+    and DATE(gp.game.date) >= :dateFrom
+    and DATE(gp.game.date) <= :dateTo
     GROUP BY gp.player.name, gp.player.playerOrder
     ORDER BY gp.player.playerOrder asc
     """)
-    List<StatWithNumber> getNumberOfWins();
+    List<StatWithNumber> getNumberOfWins(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
     @Query("""
     SELECT gp.player.playerOrder, gp.player.name as name, COUNT(*) as number
@@ -54,16 +57,20 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     @Query("""
     SELECT gp.player.playerOrder, gp.player.name as name, COUNT(*) as number
     from GameParticipation gp
+    where DATE(gp.game.date) >= :dateFrom
+    and DATE(gp.game.date) <= :dateTo
     GROUP BY gp.player.name, gp.player.playerOrder
     ORDER BY gp.player.playerOrder asc
     """)
-    List<StatWithNumber> getNumberOfGamesPerPlayer();
+    List<StatWithNumber> getNumberOfGamesPerPlayer(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
     @Query("""
     SELECT COUNT(*)
-    from Game
+    from Game g
+    where DATE(g.date) >= :dateFrom
+    and DATE(g.date) <= :dateTo
     """)
-    Integer getNumberOfGamesTotal();
+    Integer getNumberOfGamesTotal(@Param("dateFrom") LocalDate dateFrom, @Param("dateTo") LocalDate dateTo);
 
     @Query("""
         SELECT gp.player.playerOrder, gp.player.name as name, COUNT(*)/20.0 as number
@@ -95,37 +102,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     ORDER BY gp.player.playerOrder asc
     """)
     List<StatWithNumber> getNumberOfCaptainWins();
-
-//    @Query("""
-//        SELECT games_with_ccv.playerOrder, games_with_ccv.captain_name as name, Max(games_with_ccv.ccv) as number
-//        FROM (
-//        SELECT g.captain.name as captain_name, g.captain.playerOrder as playerOrder, SUM(gp.kills) - SUM(gp.deaths) + SUM(gp.assists)/2.0 as ccv
-//    FROM Game g
-//LEFT JOIN Player p on p = g.captain
-//LEFT JOIN GameParticipation gp on gp.game = g
-//    where p.name <> 'Gegner'
-//group by g.captain.name, g.captain.playerOrder
-//) AS games_with_ccv
-//group by games_with_ccv.captain_name, games_with_ccv.playerOrder
-//ORDER BY games_with_ccv.playerOrder asc
-//    """)
-//    List<StatWithNumber> getBestGameAsCaptainCCV();
-
-//    @Query("""
-//        SELECT games_with_ccv.playerOrder, games_with_ccv.captain_name as name, games_with_ccv.gameNumber as number, Max(games_with_ccv.ccv) 
-//        FROM (
-//        SELECT g.captain.name as captain_name, g.number as gameNumber, p.name as n2, p.playerOrder as playerOrder, SUM(gp.kills) - SUM(gp.deaths) + SUM(gp.assists)/2.0 as ccv
-//    FROM Game g
-//LEFT JOIN Player p on p = g.captain
-//LEFT JOIN GameParticipation gp on gp.game = g
-//    where p.name <> 'Gegner'
-//group by g.captain.name, g.number, p.name, p.playerOrder
-//) AS games_with_ccv
-//group by games_with_ccv.captain_name, games_with_ccv.playerOrder, games_with_ccv.gameNumber
-//ORDER BY games_with_ccv.playerOrder asc
-//    """)
-//    List<StatWithNumber> getBestGameAsCaptainGameNumber();
-
+    
     @Query("""
         SELECT p.playerOrder, g.captain.name as name, SUM(gp.kills) - SUM(gp.deaths) + SUM(gp.assists)/2.0 as number
     from GameParticipation gp
