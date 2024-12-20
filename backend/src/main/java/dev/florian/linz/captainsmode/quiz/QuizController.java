@@ -78,4 +78,11 @@ public class QuizController {
         quizService.insertPoints(number, request);
     }
     
+    
+    @GetMapping("/participant/best")
+    @Transactional
+    public ResponseEntity<GetParticipantResponse> getBestParticipantsWithPoints() {
+        return new ResponseEntity<>(quizService.getBestParticipants(), HttpStatus.OK);
+    }
+    
 }

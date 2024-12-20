@@ -8,6 +8,7 @@ const InsertAnswer = () => {
     const [question, setQuestion] = useState(null);
     const [participants, setParticipants] = useState([]);
     const [answers, setAnswers] = useState([]);
+    const [correctAnswer, setCorrectAnswer] = useState("");
     const [trigger, setTrigger] = useState(true);
     const [points, setPoints] = useState([]);
     
@@ -127,6 +128,7 @@ const InsertAnswer = () => {
     const handleNextQuestionClick = async () => {
         await nextQuestion(question.number + 1);
         toggleTrigger();
+        setCorrectAnswer("")
         // window.location.reload();
     };
 
@@ -134,6 +136,7 @@ const InsertAnswer = () => {
         console.log(question.number - 1);
         await nextQuestion(question.number - 1);
         toggleTrigger();
+        setCorrectAnswer("")
         // window.location.reload();
     };
     
@@ -141,6 +144,14 @@ const InsertAnswer = () => {
         await submitPoints(question.number);
         toggleTrigger();
         // window.location.reload();
+    };
+    
+    const handleCorrectAnswerClick = async () => {
+        if (correctAnswer) {
+            setCorrectAnswer("");
+        } else {
+            setCorrectAnswer(question.correctAnswer);
+        }
     };
     
     
@@ -180,8 +191,12 @@ const InsertAnswer = () => {
             </div>
         } else {
             return <div>
-                <h1>Frage Nummer {question.number}</h1>
+                <h1>Frage Nummer {question.number} von 14</h1>
                 <h2> {question.question}</h2>
+
+                {correctAnswer.length > 0 && <h3 style={{marginBottom: '16px'}}>Auflösung</h3> &&
+                    <div dangerouslySetInnerHTML={{__html: correctAnswer}}/>}
+                
 
                 {answers.length > 0 && <h3 style={{marginBottom: '16px'}}>Antworten</h3>}
                 <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
@@ -227,13 +242,13 @@ const InsertAnswer = () => {
                 </div>
 
                 <div>
-                    <button onClick={handleCloseQuestionClick}>Antworten anzeigen</button>
+                    <button onClick={handleCloseQuestionClick} style={{margin: '8px'}}>Spieler-Antworten anzeigen
+                    </button>
+                    <button onClick={handleCorrectAnswerClick} style={{margin: '8px'}}>Toggle Auflösung</button>
+                    <button onClick={handleSubmitPointsClick} style={{margin: '8px'}}>Punkte eintragen</button>
                 </div>
-                <div>
-                    <button onClick={handleSubmitPointsClick}>Punkte eintragen</button>
-                </div>
-                <button onClick={handlePreviousQuestionClick}>Vorherige Frage</button>
-                <button onClick={handleNextQuestionClick}>Nächste Frage</button>
+                <button onClick={handlePreviousQuestionClick} style={{margin: '8px'}}>Vorherige Frage</button>
+                <button onClick={handleNextQuestionClick} style={{margin: '8px'}}>Nächste Frage</button>
             </div>
         }
 }

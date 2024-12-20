@@ -58,4 +58,8 @@ public class QuizMapper {
         }
         return participants;
     }
+
+    public static GetParticipantResponse mapBestParticipantsResponse(AnswerRepository.ParticipantsResponse participantsResponse) {
+        return new GetParticipantResponse(participantsResponse.getName(), participantsResponse.getPoints());
+    }
 }

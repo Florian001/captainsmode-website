@@ -42,6 +42,11 @@ public class QuizService extends BaseService {
         return QuizMapper.mapParticipantsResponse(participantsResponse);
     }
 
+    public GetParticipantResponse getBestParticipants() {
+        Optional<AnswerRepository.ParticipantsResponse> participantsResponse = answerRepository.getBestParticipants();
+        return QuizMapper.mapBestParticipantsResponse(participantsResponse.get());
+    }
+
     public Optional<Question> getQuestion() {
         return questionRepository.findByActive(true);
     }

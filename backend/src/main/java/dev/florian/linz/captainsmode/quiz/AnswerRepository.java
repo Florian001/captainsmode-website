@@ -24,6 +24,15 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     """)
     List<ParticipantsResponse> getParticipants();
 
+    @Query("""
+    SELECT a.person as name, SUM(a.points) as points
+    FROM Answer a
+    group by a.person
+    order by points desc
+    limit 1
+    """)
+    Optional<ParticipantsResponse> getBestParticipants();
+
 
     @Query("""
     SELECT a.person as name, a.answer as answer, a.points as points
