@@ -12,4 +12,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByNumber(int number);
 
     Optional<Question> findByActive(boolean active);
+    
+    @Query("SELECT q from Question q order by q.number")
+    List<Question> findAllOrderByNumber();
 }

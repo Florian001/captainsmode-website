@@ -6,6 +6,7 @@ import dev.florian.linz.captainsmode.game.MinimumGameResponse;
 import dev.florian.linz.captainsmode.game.generalStats.GetStatsResponse;
 import dev.florian.linz.captainsmode.player.PlayerService;
 import dev.florian.linz.captainsmode.rest.error.BadRequestException;
+import java.rmi.UnexpectedException;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class GoldenChampController {
 
     @GetMapping("/wrong-champs")
     @Transactional(readOnly = true)
-    public ResponseEntity<Set<String>> getWrongChampions() {
+    public ResponseEntity<Set<String>> getWrongChampions() throws UnexpectedException {
         return new ResponseEntity<>(goldenChampService.getWrongChampions(), HttpStatus.OK);
     }
 

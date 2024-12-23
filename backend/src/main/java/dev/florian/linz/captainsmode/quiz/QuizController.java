@@ -84,5 +84,11 @@ public class QuizController {
     public ResponseEntity<GetParticipantResponse> getBestParticipantsWithPoints() {
         return new ResponseEntity<>(quizService.getBestParticipants(), HttpStatus.OK);
     }
+
+    @GetMapping("/everything")
+    @Transactional
+    public ResponseEntity<List<GetWholeQuizResponse>> getEverything() {
+        return new ResponseEntity<>(quizService.getEverything(), HttpStatus.OK);
+    }
     
 }

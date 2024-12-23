@@ -4,6 +4,7 @@ import dev.florian.linz.captainsmode.api.ConfigurationController;
 import dev.florian.linz.captainsmode.rest.error.BadRequestException;
 import dev.florian.linz.captainsmode.rest.error.ErrorCode;
 import dev.florian.linz.captainsmode.utils.BaseService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -87,5 +88,16 @@ public class QuizService extends BaseService {
             Optional<Answer> answer = answerRepository.findByPersonAndQuestion(addPointsRequest.participant(), number);
             answer.ifPresent(ans -> ans.setPoints(addPointsRequest.points())); 
         }
+    }
+
+    public List<GetWholeQuizResponse> getEverything() {
+        List<Question> questions = questionRepository.findAllOrderByNumber();
+        List<GetWholeQuizResponse> responses = new ArrayList<>();
+        for (Question question : questions) {
+            List<GetParticipantAnswerResponse> playerAnswers = getParticipantAnswers(question.getNumber());
+            GetWholeQuizResponse response = new GetWholeQuizResponse(question.getQuestion(), question.getCorrectAnswer(), playerAnswers);
+            responses.add(response);
+        }
+        return responses;
     }
 }

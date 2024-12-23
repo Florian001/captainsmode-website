@@ -43,11 +43,7 @@ public class GoldenChampion {
     @OneToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(nullable = true)
     private Game gameFound;
-
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Game firstGame;
-
+    
     @ElementCollection
     @JoinColumn(name = "golden_champ_id")
     private final Set<String> wrongChampions = new HashSet<>();

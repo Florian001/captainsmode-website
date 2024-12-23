@@ -19,6 +19,7 @@ import dev.florian.linz.captainsmode.rest.error.BadRequestException;
 import dev.florian.linz.captainsmode.rest.error.ErrorCode;
 import static dev.florian.linz.captainsmode.rest.error.ErrorCode.ENTITY_NOT_FOUND;
 import dev.florian.linz.captainsmode.utils.BaseService;
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,8 +64,12 @@ public class GoldenChampService extends BaseService {
         return new ArrayList<>(data.keySet());
     }
 
-    public Set<String> getWrongChampions() {
-        return goldenChampRepository.getCurrentWrongChampions();
+    public Set<String> getWrongChampions() throws UnexpectedException {
+        List<GoldenChampion> goldenChampionsList = goldenChampRepository.getCurrentGoldenChampRow();
+        if (goldenChampionsList.size() != 1) {
+            throw new UnexpectedException("There should be exactly one golden Champ");
+        }
+        return goldenChampionsList.getFirst().getWrongChampions();
     }
 
     public void processGoldenChamp(Game newGame) {

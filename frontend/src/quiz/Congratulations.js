@@ -29,7 +29,7 @@ const Congratulations = ({ name, points }) => {
         <div className="congratulations-banner">
             <div className="congratulations-content">
                 Weihnachtsquiz 2024 Gewinner: <br/>
-                {bestPlayer.name} - {bestPlayer.points} points
+                {bestPlayer.name} - {bestPlayer.points} Punkte
                 <br/>
                 GG WP!
             </div>

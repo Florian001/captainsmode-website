@@ -80,28 +80,33 @@ const InsertAnswer = () => {
     };
     
     if (name) {
-        if (question === null) {
-            return <div>
-                <h1> Hallo {name} </h1>
-                <h2> Es ist keine Frage zur Zeit ausgewählt</h2>
-                <ReloadButton/>
-            </div>
-        }
         return <div>
-            <h1> Hallo {name} </h1>
-            <h2>Frage Nummer {question.number}</h2>
-            <h3> {question.question}</h3>
-            <label>
-                <input
-                    type="text"
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    placeholder="Antwort"
-                />
-                <button onClick={handleAnswerSubmit}>Abschicken!</button>
-            </label>
-            <ReloadButton/>
+                     <h1> Hallo {name} </h1>
+                     <h2> Das Weihnachtsquiz 2024 ist vorbei!</h2>
+                     <ReloadButton/>
         </div>
+        // if (question === null) {
+        //     return <div>
+        //         <h1> Hallo {name} </h1>
+        //         <h2> Es ist keine Frage zur Zeit ausgewählt</h2>
+        //         <ReloadButton/>
+        //     </div>
+        // }
+        // return <div>
+        //     <h1> Hallo {name} </h1>
+        //     <h2>Frage Nummer {question.number}</h2>
+        //     <h3> {question.question}</h3>
+        //     <label>
+        //         <input
+        //             type="text"
+        //             value={answer}
+        //             onChange={(e) => setAnswer(e.target.value)}
+        //             placeholder="Antwort"
+        //         />
+        //         <button onClick={handleAnswerSubmit}>Abschicken!</button>
+        //     </label>
+        //     <ReloadButton/>
+        // </div>
     } else {
         return (
             <div>

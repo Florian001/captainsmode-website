@@ -8,6 +8,7 @@ const Sidenav = () => {
             <Link to="/">Übersicht</Link>
             <Link to="/stats">Statistiken</Link>
             <Link to="/golden-champ">Goldener Champion</Link>
+            <Link to="/quiz">Weihnachtsquiz 2024</Link>
             <Link to="/settings">Einstellungen</Link>
         </div>
     );

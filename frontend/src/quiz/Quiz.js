@@ -6,11 +6,38 @@ const InsertAnswer = () => {
 
 
     const [question, setQuestion] = useState(null);
+    const [everything, setEverything] = useState([]);
+    const [number, setNumber] = useState(1);
     const [participants, setParticipants] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [correctAnswer, setCorrectAnswer] = useState("");
     const [trigger, setTrigger] = useState(true);
     const [points, setPoints] = useState([]);
+
+    const fetchEverything = async () => {
+        try {
+
+            const questionResponse = await fetch(baseUrl + 'api/v1/quiz/everything', {
+                method: "get",
+                headers: new Headers({
+                    "Authorization": "Basic " + btoa(localStorage.getItem("username") + ":" + localStorage.getItem("password"))
+                }),
+            });
+            const questionData = await questionResponse.json();
+            setEverything(questionData);
+            setQuestion(questionData[number-1].question);
+            setCorrectAnswer(questionData[number-1].correctAnswer);
+            setAnswers(questionData[number-1].playerAnswers);
+        } catch (error) {
+            setQuestion(null);
+            console.error('Error fetching everything:', error);
+        }
+    };
+
+    useEffect(() => {
+        console.log("Hier"); // Logs after `everything` has been updated
+        console.log(everything); // Logs after `everything` has been updated
+    }, [everything]);
     
     const fetchCurrentQuestion = async () => {
         try {
@@ -71,10 +98,14 @@ const InsertAnswer = () => {
     
 
     useEffect(() => {
-        fetchCurrentQuestion();
+        // fetchCurrentQuestion();
         fetchParticipants();
-    }, [trigger]);
+        fetchEverything();
+    }, []);
 
+    useEffect(() => {
+        fetchEverything();
+    }, [number]);
     
     const nextQuestion = async (number) => {
         const url = baseUrl + `api/v1/quiz/question/${number}`;
@@ -126,18 +157,26 @@ const InsertAnswer = () => {
     }
     
     const handleNextQuestionClick = async () => {
-        await nextQuestion(question.number + 1);
-        toggleTrigger();
-        setCorrectAnswer("")
-        // window.location.reload();
+        // await nextQuestion(question.number + 1);
+        // toggleTrigger();
+        // setCorrectAnswer("")
+        const newNumber = Math.min(14,number+1);
+        setNumber(newNumber);
+        setQuestion(everything[newNumber-1].question);
+        setCorrectAnswer(everything[newNumber-1].correctAnswer);
+        setAnswers(everything[newNumber-1].playerAnswers);
     };
 
     const handlePreviousQuestionClick = async () => {
-        console.log(question.number - 1);
-        await nextQuestion(question.number - 1);
-        toggleTrigger();
-        setCorrectAnswer("")
-        // window.location.reload();
+        // console.log(question.number - 1);
+        // await nextQuestion(question.number - 1);
+        // toggleTrigger();
+        // setCorrectAnswer("")
+        const newNumber = Math.max(1,number-1);
+        setNumber(newNumber);
+        setQuestion(everything[newNumber-1].question);
+        setCorrectAnswer(everything[newNumber-1].correctAnswer);
+        setAnswers(everything[newNumber-1].playerAnswers);
     };
     
     const handleSubmitPointsClick = async () => {
@@ -150,7 +189,7 @@ const InsertAnswer = () => {
         if (correctAnswer) {
             setCorrectAnswer("");
         } else {
-            setCorrectAnswer(question.correctAnswer);
+            setCorrectAnswer(everything[number-1].correctAnswer);
         }
     };
     
@@ -191,12 +230,15 @@ const InsertAnswer = () => {
             </div>
         } else {
             return <div>
-                <h1>Frage Nummer {question.number} von 14</h1>
-                <h2> {question.question}</h2>
+                <h1>Frage Nummer {number} von 14</h1>
+                <h2> {question}</h2>
+                <button onClick={handlePreviousQuestionClick} style={{margin: '8px'}}>Vorherige Frage</button>
+                <button onClick={handleNextQuestionClick} style={{margin: '8px'}}>Nächste Frage</button>
+                <button onClick={handleCorrectAnswerClick} style={{margin: '8px'}}>Toggle Auflösung</button>
 
                 {correctAnswer.length > 0 && <h3 style={{marginBottom: '16px'}}>Auflösung</h3> &&
                     <div dangerouslySetInnerHTML={{__html: correctAnswer}}/>}
-                
+
 
                 {answers.length > 0 && <h3 style={{marginBottom: '16px'}}>Antworten</h3>}
                 <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
@@ -213,9 +255,9 @@ const InsertAnswer = () => {
                         >
                             <h3>{item.name}</h3>
                             <p>{item.answer}</p>
-                            <p> +{points[item.name]} Punkte</p>
-                            <button onClick={() => decrementPoints(item.name)}>-</button>
-                            <button onClick={() => incrementPoints(item.name)}>+</button>
+                            {/*<p> +{points[item.name]} Punkte</p>*/}
+                            {/*<button onClick={() => decrementPoints(item.name)}>-</button>*/}
+                            {/*<button onClick={() => incrementPoints(item.name)}>+</button>*/}
 
                         </div>
                     ))}
@@ -241,14 +283,6 @@ const InsertAnswer = () => {
                     ))}
                 </div>
 
-                <div>
-                    <button onClick={handleCloseQuestionClick} style={{margin: '8px'}}>Spieler-Antworten anzeigen
-                    </button>
-                    <button onClick={handleCorrectAnswerClick} style={{margin: '8px'}}>Toggle Auflösung</button>
-                    <button onClick={handleSubmitPointsClick} style={{margin: '8px'}}>Punkte eintragen</button>
-                </div>
-                <button onClick={handlePreviousQuestionClick} style={{margin: '8px'}}>Vorherige Frage</button>
-                <button onClick={handleNextQuestionClick} style={{margin: '8px'}}>Nächste Frage</button>
             </div>
         }
 }

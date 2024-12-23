@@ -11,7 +11,6 @@ function App() {
         <Router>
             <div className="app">
                 <Sidenav />
-                <Congratulations name="John Doe" points={150} />
                 <MainContent />
             </div>
         </Router>
