@@ -8,8 +8,8 @@ const OverviewPage = () => {
     return (
         <div className="App">
             <h1>Captainsmode</h1>
-            <Congratulations name="John Doe" points={150} />
-            <OverviewTable />
+            <Congratulations name="John Doe" points={150}/>
+            <OverviewTable/>
         </div>
     );
 }

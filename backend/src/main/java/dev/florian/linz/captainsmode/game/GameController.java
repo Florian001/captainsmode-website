@@ -2,6 +2,7 @@ package dev.florian.linz.captainsmode.game;
 
 
 import dev.florian.linz.captainsmode.api.LolApiService;
+import dev.florian.linz.captainsmode.game.generalStats.CumulativePointsDto;
 import dev.florian.linz.captainsmode.game.generalStats.GetStatsResponse;
 import dev.florian.linz.captainsmode.player.PlayerService;
 import dev.florian.linz.captainsmode.rest.error.BadRequestException;
@@ -110,5 +111,17 @@ public class GameController {
             throw new BadRequestException(ErrorCode.DATE_ERROR, "Date from is after date to");
         }
         return new ResponseEntity<>(gameService.getStats(statsType, dateFromInclusive, dateToInclusive), HttpStatus.OK);
+    }
+
+    @GetMapping("/stats/ranking-points")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<GameRepository.RankingpointsStat>> getRankingPoints() {
+        return new ResponseEntity<>(gameService.getRankingPointsResponse(), HttpStatus.OK);
+    }
+    
+    @GetMapping("/stats/ranking-points-last-10")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<GameRepository.RankingpointsStat>> getRankingPointsLast10Games() {
+        return new ResponseEntity<>(gameService.getRankingPointsLast10GamesResponse(), HttpStatus.OK);
     }
 }

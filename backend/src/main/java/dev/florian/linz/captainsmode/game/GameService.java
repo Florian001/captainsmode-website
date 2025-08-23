@@ -4,6 +4,8 @@ import dev.florian.linz.captainsmode.api.ConfigurationController;
 import dev.florian.linz.captainsmode.api.GameResponse;
 import dev.florian.linz.captainsmode.api.LolApiService;
 import static dev.florian.linz.captainsmode.game.GameMapper.ENEMY;
+
+import dev.florian.linz.captainsmode.game.generalStats.CumulativePointsDto;
 import dev.florian.linz.captainsmode.game.generalStats.GetNumberStatOfPlayer;
 import dev.florian.linz.captainsmode.game.generalStats.GetNumberStatResponse;
 import dev.florian.linz.captainsmode.game.generalStats.GetStatsResponse;
@@ -197,12 +199,12 @@ public class GameService extends BaseService {
 
         List<GetStatsResponse> stats = new ArrayList<>();
 
-        stats.add(mapNumbersRepoResponse(statService.getNumberOfCaptains(dateFrom, dateTo), "Anzahl Captain", true, false, false));
-        stats.add(mapNumbersRepoResponse(statService.getNumberOfCaptainWins(dateFrom, dateTo), "Anzahl Captainsiege", true, false, false));
-        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptainWins(dateFrom, dateTo), statService.getNumberOfCaptains(dateFrom, dateTo), "Captain winrate", true, true, false));
-        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptains(dateFrom, dateTo), gameRepository.getNumberOfGamesPerPlayer(dateFrom, dateTo), "Als Captain teilgenommen", true, true, false));
-        stats.add(mapNumbersRepoResponseWithDivide(statService.getNumberOfCaptains(dateFrom, dateTo), gameRepository.getNumberOfGamesTotal(dateFrom, dateTo), "Captainanteil an allen Spielen", true, true, false));
-        stats.add(mapNumbersRepoResponse(statService.getAverageTeamCCVIfCaptain(dateFrom, dateTo),"Ø Team-CCV als Captain", true, false, false));
+        stats.add(mapNumbersRepoResponse(gameRepository.getNumberOfCaptains(dateFrom, dateTo), "Anzahl Captain", true, false, false));
+        stats.add(mapNumbersRepoResponse(gameRepository.getNumberOfCaptainWins(dateFrom, dateTo), "Anzahl Captainsiege", true, false, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getNumberOfCaptainWins(dateFrom, dateTo), gameRepository.getNumberOfCaptains(dateFrom, dateTo), "Captain winrate", true, true, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getNumberOfCaptains(dateFrom, dateTo), gameRepository.getNumberOfGamesPerPlayer(dateFrom, dateTo), "Als Captain teilgenommen", true, true, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getNumberOfCaptains(dateFrom, dateTo), gameRepository.getNumberOfGamesTotal(dateFrom, dateTo), "Captainanteil an allen Spielen", true, true, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getSumCCVPerPlayerIfCaptain(dateFrom, dateTo),gameRepository.getNumberOfCaptains(dateFrom, dateTo), "Ø Team-CCV als Captain", true, false, false));
         stats.add(mapNumbersRepoResponse(statService.getBestTeamCCVIfCaptain(dateFrom, dateTo),"Bestes Captainspiel (Team-CCV)", true, false, false));
         stats.add(mapNumbersRepoResponse(statService.getBestTeamCCVIfCaptainGameNumber(dateFrom, dateTo),"  -> in Spiel", null, false, false));
         stats.add(mapNumbersRepoResponse(statService.getWorstTeamCCVIfCaptain(dateFrom, dateTo),"Schlechtestes Captainspiel (Team-CCV)", true, false, false));
@@ -219,11 +221,9 @@ public class GameService extends BaseService {
         stats.add(mapNumbersRepoResponse(statService.getAverageKillsPerPlayer(dateFrom, dateTo), "Ø Kills", true, false, false));
         stats.add(mapNumbersRepoResponse(statService.getAverageDeathsPerPlayer(dateFrom, dateTo), "Ø Deaths", false, false, false));
         stats.add(mapNumbersRepoResponse(statService.getAverageAssistsPerPlayer(dateFrom, dateTo), "Ø Assists", true, false, false));
-//        stats.add(mapNumbersRepoResponse(statService.getAverageCCVPerPlayer(dateFrom, dateTo), "Ø ccv", true, false, false));
-//        stats.add(mapNumbersRepoResponse(statService.getAverageCCVOnWinsPerPlayer(), "Ø ccv bei Sieg", true, false, false));
-//        stats.add(mapNumbersRepoResponse(statService.getAverageCCVOnLossesPerPlayer(), "Ø ccv bei Loss", true, false, false));
-        
-
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getSumCCVPerPlayer(dateFrom, dateTo),gameRepository.getNumberOfGamesPerPlayer(dateFrom, dateTo), "Ø ccv", true, false, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getSumCCVPerPlayerOnWins(dateFrom, dateTo),gameRepository.getNumberOfWins(dateFrom, dateTo), "Ø ccv bei Sieg", true, false, false));
+        stats.add(mapNumbersRepoResponseWithDivide(gameRepository.getSumCCVPerPlayer(dateFrom, dateTo),gameRepository.getNumberOfLosses(dateFrom, dateTo), "Ø ccv bei Loss", true, false, false));
         return stats;
     }
     
@@ -251,7 +251,6 @@ public class GameService extends BaseService {
         playerStats.forEach(ps -> {
             ps.setBest(ps.getValue() == finalBest);
             ps.setWorst(ps.getValue() == finalWorst);
-            
         });
         return new GetNumberStatResponse(displayName, percentValue, playerStats);
     }
@@ -333,6 +332,14 @@ public class GameService extends BaseService {
             }
         }
         return new GetStringStatsResponse(displayName, playerStats);
+    }
+
+    public List<GameRepository.RankingpointsStat> getRankingPointsResponse() {
+        return gameRepository.getRankingpointsPerGameOfPlayer();
+    }
+    
+    public List<GameRepository.RankingpointsStat> getRankingPointsLast10GamesResponse() {
+        return gameRepository.getRankingpointsPerLast10GameOfPlayer();
     }
     
     private List<GetStatsResponse> getCSStats(LocalDate dateFrom, LocalDate dateTo) {

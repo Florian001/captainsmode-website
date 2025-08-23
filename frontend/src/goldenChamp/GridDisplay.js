@@ -1,7 +1,7 @@
 import {dataDragonVersion} from "../GlobalContext";
 
 const GridDisplay = ({ data, all, open }) => {
-    // Split the data into rows, each containing 10 entries
+    // Split the data into rows, each containing itemsPerRow many entries
     const itemsPerRow = 15;
     const rows = [];
     

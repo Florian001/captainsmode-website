@@ -90,5 +90,17 @@ public class QuizController {
     public ResponseEntity<List<GetWholeQuizResponse>> getEverything() {
         return new ResponseEntity<>(quizService.getEverything(), HttpStatus.OK);
     }
+
+    @PostMapping("/champion-quiz/result")
+    @Transactional
+    public void postResult(@RequestBody PostChampionQuizResultRequest request) {
+        quizService.insertResult(request);
+    }
+
+    @GetMapping("/champion-quiz/result")
+    @Transactional
+    public ResponseEntity<List<Scoreboard>> getResults() {
+        return new ResponseEntity<>(quizService.getScoreboards(), HttpStatus.OK);
+    }
     
 }

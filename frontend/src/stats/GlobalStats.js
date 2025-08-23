@@ -99,12 +99,32 @@ const GlobalStats = ({statType, dateFrom, dateTo}) => {
                 <td className={`bla`}>
                     {stat.displayName}
                 </td>
-                {stat.statsOfPlayers.map((statOfPlayer, contentIndex) => (
-                    
-                    <td key={contentIndex} className={statOfPlayer.best ? "td-global-stat-best" : statOfPlayer.worst ? "td-global-stat-worst" : ""}>
-                        {statOfPlayer.value} {stat.percentValue ? " %" : ""}
-                    </td>
-                ))}
+                {stat.statsOfPlayers.map((statOfPlayer, contentIndex) => {
+                    const playerNameIndex = players.findIndex(player => player.name === statOfPlayer.playerName);
+                    let i = 0;
+                    console.log("playerNameIndex");
+                console.log(playerNameIndex);
+                    // Initialize an array to hold <td> elements
+                    const cells = [];
+
+                    // Add empty <td> elements for missing players
+                    while (contentIndex + i < playerNameIndex) {
+                        cells.push(<td key={`empty-${contentIndex}`}></td>);
+                        console.log("empty");
+                        i++; // Increment to move to the correct index
+                    }
+
+                    // Add the actual <td> element for the statOfPlayer
+                    cells.push(
+                        <td key={contentIndex}
+                            className={statOfPlayer.best ? "td-global-stat-best" : statOfPlayer.worst ? "td-global-stat-worst" : ""}>
+                            {statOfPlayer.value} {stat.percentValue ? " %" : ""}
+                        </td>
+                    );
+
+                    return cells;
+                })}
+
             </tr>
         ))}
         </tbody>

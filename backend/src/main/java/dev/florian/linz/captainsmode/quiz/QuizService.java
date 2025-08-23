@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,10 +19,12 @@ public class QuizService extends BaseService {
 
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
+    private final ScoreboardRepository scoreboardRepository;
 
-    public QuizService(AnswerRepository answerRepository, QuestionRepository questionRepository) {
+    public QuizService(AnswerRepository answerRepository, QuestionRepository questionRepository, ScoreboardRepository scoreboardRepository) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
+        this.scoreboardRepository = scoreboardRepository;
     }
 
 
@@ -99,5 +102,18 @@ public class QuizService extends BaseService {
             responses.add(response);
         }
         return responses;
+    }
+
+    public void insertResult(PostChampionQuizResultRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Scoreboard newScoreboard = new Scoreboard();
+        newScoreboard.setPerson(username);
+        newScoreboard.setPoints(request.points());
+        newScoreboard.setDateTime(request.dateTime());
+        scoreboardRepository.save(newScoreboard);
+    }
+
+    public List<Scoreboard> getScoreboards() {
+        return scoreboardRepository.findAllOrderedByPointsDesc();
     }
 }

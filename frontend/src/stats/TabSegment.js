@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, Tab, Box } from '@mui/material';
 import GlobalStats from "./GlobalStats";
 import DateRangePicker from "./DateRangePicker";
+import RankingPoints from "./RankingPointsStats";
 
 const TabSegment = () => {
     const today = new Date();
@@ -21,11 +22,12 @@ const TabSegment = () => {
                 <Tab label="Allgemein" />
                 <Tab label="Captain" />
                 <Tab label="KDA" />
-                <Tab label="Damage" />
+                <Tab label="Ranking Points" />
             </Tabs>
             {selectedTab === 0 && <GlobalStats statType={"GENERAL"} dateTo={dateRange.dateTo} dateFrom={dateRange.dateFrom}/>}
             {selectedTab === 1 && <GlobalStats statType={"CAPTAIN"} dateTo={dateRange.dateTo} dateFrom={dateRange.dateFrom}/>}
             {selectedTab === 2 && <GlobalStats statType={"KDA"} dateTo={dateRange.dateTo} dateFrom={dateRange.dateFrom}/>}
+            {selectedTab === 3 && <RankingPoints/>}
         </Box>
         </div>
     );

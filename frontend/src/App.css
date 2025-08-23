@@ -46,6 +46,8 @@
   width: 10%;
   background-color: #f4f4f4;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content {
@@ -67,4 +69,369 @@
   font-weight: bold;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Adds shadow for better visibility */
 }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.small-news-banner {
+  /*position: fixed; !* Stick to the top-left corner *!*/
+  /*bottom: 10px; !* Slight padding from the top *!*/
+  /*left: 10px; !* Slight padding from the left *!*/
+  background-color: orange; /* Red for urgency */
+  color: black; /* White text for contrast */
+  overflow: hidden; /* Hide the scrolling text */
+  white-space: nowrap; /* Ensure text doesn't wrap */
+  width: 200px; /* Small width */
+  height: 30px; /* Small height */
+  border-radius: 5px; /* Rounded corners for aesthetics */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+  z-index: 1000; /* Ensure it stays on top */
+  display: flex; /* Center align text vertically */
+  align-items: center;
+}
+
+.small-news-text {
+  display: inline-block;
+  padding-left: 100%; /* Start off-screen */
+  animation: small-scroll 10s linear infinite; /* Adjust speed */
+  font-size: 12px; /* Small font size */
+}
+
+@keyframes small-scroll {
+  from {
+    transform: translateX(0); /* Start at the right edge */
+  }
+  to {
+    transform: translateX(-100%); /* Move completely to the left */
+  }
+}
+
+
+.small-news-text:hover {
+  animation-play-state: paused;
+}
+
+.app-version {
+  bottom: 10px; 
+}
+
+.menu {
+  flex-grow: 1;          /* Pushes other content to the bottom */
+}
+
+
+@media (max-width: 600px) {
+.news-banner {
+  font-size: 14px;
+}
+}
+
+.logout-button{
+  margin-left: 10px;
+}
+
+.champ-answer-img img {
+  width: 75px; /* Adjust the width */
+  height: 75px; /* Adjust the height */
+  object-fit: cover; /* Ensures the image scales without distortion */
+  border-radius: 5px; /* Optional: rounded corners */
+  transition: transform 0.2s, box-shadow 0.2s; /* For hover effect */
+}
+
+.champ-answer-img img:hover {
+  transform: scale(1.1); /* Slight zoom effect on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Optional shadow */
+}
+
+/* Container to align the boxes horizontally */
+.info-container {
+  display: flex;
+  gap: 20px; /* Space between the two boxes */
+  justify-content: center; /* Centers the boxes horizontally */
+  align-items: center; /* Aligns the boxes vertically */
+  flex-wrap: nowrap; /* Prevents the boxes from wrapping onto the next line */
+  margin: 20px 0;
+}
+
+/* Common styling for both points and name boxes */
+.points-box,
+.name-box {
+  width: 200px;
+  height: 100px;
+  background: linear-gradient(135deg, #ff7f50, #ffa500); /* Orange gradient */
+  color: black;
+  display: flex;
+  justify-content: center; /* Centers the content horizontally */
+  align-items: center; /* Centers the content vertically */
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Hover effect to slightly enlarge the boxes and add shadow */
+.points-box:hover,
+.name-box:hover {
+  transform: scale(1.05); /* Slight enlargement on hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+}
+
+/* Container for the lower section with five boxes */
+.lower-section {
+  display: flex;
+  gap: 20px; /* Space between the boxes */
+  justify-content: center; /* Centers the boxes horizontally */
+  margin-top: 40px; /* Space from the top section */
+}
+
+/* Styling for each main box */
+.main-box {
+  display: flex;
+  flex-direction: column; /* Stack header and content vertically */
+  align-items: center; /* Center the content horizontally */
+  width: 150px;
+  height: 200px;
+  background: linear-gradient(135deg, #ff7f50, #ffa500); /* Orange gradient */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Styling for the header box */
+.header-box {
+  width: 100%;
+  height: 50px;
+  background: #ff4500; /* Solid darker orange for contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-weight: bold;
+  font-size: 18px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
+  z-index: 1;
+  cursor: pointer; 
+}
+
+/* Styling for the content area */
+.content-box {
+  min-height: 50px;
+  flex: 1; /* Takes up the remaining space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+
+.content-box-small {
+  font-size: 10px;
+  margin: 5px;
+}
+
+/* Hover effect for the main box */
+.main-box:hover {
+  transform: scale(1.05); /* Slight enlargement on hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+}
+
+.stats-table {
+  width: 150px; /* Set a smaller width */
+  border-collapse: collapse;
+  font-size: 16px; /* Smaller text size */
+}
+
+.stat-label {
+  font-weight: bold;
+  padding-right: 16px; /* Space between label and value */
+}
+
+.stat-value {
+  text-align: left;
+}
+
+.stats-table td {
+  padding: 3px;
+}
+
+.success-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Space between the boxes */
+  margin: 1rem auto;
+  justify-content: center;
+}
+
+.success-box {
+  background-color: #ffa500; 
+  color: black;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+.wrong-box {
+  background-color: #ff4500; /* Green success color */
+  color: black;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+.proceed-box {
+  background-color: #ffa500; 
+  color: black;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+.proceed-box:hover {
+  background-color:#ff4500;
+  transform: scale(1.05);
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  90% {
+    opacity: 1;
+  }
+}
+
+.scoreboard-container {
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.scoreboard-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.scoreboard-table th,
+.scoreboard-table td {
+  text-align: left;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+.scoreboard-table th {
+  background-color: #ffa500;
+  color: black;
+}
+
+.scoreboard-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.scoreboard-table tr:hover {
+  background-color: #ddd;
+}
+
+.name-cell {
+  position: relative;
+}
+
+.hover-date {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  top: 120%;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  font-size: 0.9rem;
+  z-index: 10;
+}
+
+.name-cell:hover .hover-date {
+  visibility: visible;
+  opacity: 1;
+}
+
+.submenu {
+  margin: 10px 0;
+}
+
+
+
+.submenu-items {
+  margin-left: 15px;
+}
+
+.submenu-items a {
+  display: block;
+  /*padding: 5px 0;*/
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  margin-left: 2%;
+  width: 50%; /* Restrict to half the page width */
+
+}
+
+.header-arrow {
+  cursor: pointer;
+  user-select: none;
+  font-size: 2rem;
+}
+
+.header-title {
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+
+
+
+
+
 

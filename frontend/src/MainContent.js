@@ -10,6 +10,9 @@ import InsertAnswer from "./quiz/InsertAnswer";
 import InsertQuestion from "./quiz/InsertQuestion";
 import QuizDisplay from "./quiz/QuizDisplay";
 import Quiz from "./quiz/Quiz";
+import PatchNotes from "./settings/PatchNotes";
+import ChampQuizMainPage from "./championQuiz/ChampQuizMainPage";
+import Scoreboard from "./championQuiz/Scoreboard";
 
 
 const MainContent = () => {
@@ -19,7 +22,10 @@ const MainContent = () => {
                 <Route path="/" element={<OverviewPage />} />
                 <Route path="/stats" element={<StatsMainPage />} />
                 <Route path="/golden-champ" element={<GoldenChampMainPage />} />
+                <Route path="/champ-quiz" element={<ChampQuizMainPage />} />
+                <Route path="/champ-quiz/scoreboard" element={<Scoreboard />} />
                 <Route path="/settings" element={<SettingsMainPage />} />
+                <Route path="/patch-notes" element={<PatchNotes />} />
                 <Route exact path="/overview" element={<OverviewPage />}/>
                 <Route path="/details/:id" element={<DetailsPage />}/>
                 <Route path="/quiz/answers" element={<InsertAnswer />}/>
