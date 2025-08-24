@@ -5,9 +5,9 @@ const PatchNotes = () => {
     return (
         <div>
             <h1>Patch Notes</h1>
-            <h3>v.1.1.3 (02.01.2025)</h3>
+            <h3>v.1.1.3 (23.08.2025)</h3>
             <ul>
-                <li>RankingPoints in Statistiken</li>
+                <li>Tab RANKING PONTS in Statistiken</li>
             </ul>
 
             <h3>v.1.1.2 (02.01.2025)</h3>
