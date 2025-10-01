@@ -10,6 +10,7 @@ const RankingPoints = () => {
     const [players, setPlayers] = useState([]);
     const [stats, setStats] = useState([]);
     const [stats10, setStats10] = useState([]);
+    const [stats10Raw, setStats10Raw] = useState([]);
   
     
     useEffect(() => {
@@ -33,7 +34,7 @@ const RankingPoints = () => {
 
         // Fetch row data
         const fetchRowData = async () => {
-            console.log("STARTING FETCHING RANKING POINTS");
+            console.log("STARTING FETCHING RANKING POINTS 1");
             
             try {
                 const response = await fetch(baseUrl + `api/v1/games/stats/ranking-points`, {
@@ -56,7 +57,7 @@ const RankingPoints = () => {
         };
 
         const fetchRowData10 = async () => {
-            console.log("STARTING FETCHING RANKING POINTS");
+            console.log("STARTING FETCHING RANKING POINTS 2");
 
             try {
                 const response = await fetch(baseUrl + `api/v1/games/stats/ranking-points-last-10`, {
@@ -77,9 +78,33 @@ const RankingPoints = () => {
                 console.error('Error fetching row data:', error);
             }
         };
+
+        const fetchRowData10Raw = async () => {
+            console.log("STARTING FETCHING RANKING POINTS raw 3");
+
+            try {
+                const response = await fetch(baseUrl + `api/v1/games/stats/ranking-points-last-10-raw`, {
+                    method: "get",
+                    headers: new Headers({
+                        "ngrok-skip-browser-warning": true,
+                        "Authorization": "Basic " + btoa(localStorage.getItem("username") + ":" + localStorage.getItem("password"))
+                    }),
+                });
+                if (response.status === 400) {
+                    console.log("Fetching data last 10 raw results in Bad Request");
+                    alert("Bad Request sent");
+                } else {
+                    const data = await response.json();
+                    setStats10Raw(data);
+                }
+            } catch (error) {
+                console.error('Error fetching row data:', error);
+            }
+        };
         
         fetchRowData();
         fetchRowData10();
+        fetchRowData10Raw();
         fetchPlayers();
 
     }, []);
@@ -103,6 +128,7 @@ const RankingPoints = () => {
 
     const chartData = useChartData(players, stats);
     const chartData10 = useChartData(players, stats10);
+    const chartData10Raw = useChartData(players, stats10Raw);
     
     return (<div><h3>RankingPoints Gesamt</h3><LineChart width={900} height={500} data={chartData}>
             <CartesianGrid strokeDasharray="3 3"/>
@@ -137,7 +163,27 @@ const RankingPoints = () => {
                     />
                 ))}
             </LineChart>
-
+            <h3>RankingPoints letzte 10 Spiele - Einzelübersicht</h3>
+            <LineChart width={900} height={300} data={chartData10Raw}>
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="game"/>
+                <YAxis
+                    domain={[-2, 2]}         // fixes min and max
+                    ticks={[-2, -1, 0, 1, 2]} // only show these 5 values
+                    allowDecimals={false}    // cleaner labels
+                />
+                <Tooltip/>
+                <Legend/>
+                {players.map((p, idx) => (
+                    <Line
+                        key={p.id}
+                        type="linear"
+                        dataKey={p.name}
+                        stroke={["#8884d8", "#82ca9d", "#ff7300", "#00C49F", "#FFBB28", "#FF8042"][idx % 6]}
+                        dot={{ r: 6, fill: ["#8884d8", "#82ca9d", "#ff7300", "#00C49F", "#FFBB28", "#FF8042"][idx % 6] }}
+                    />
+                ))}
+            </LineChart>
         </div>
     );
 };

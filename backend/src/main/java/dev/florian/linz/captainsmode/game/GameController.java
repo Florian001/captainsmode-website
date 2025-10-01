@@ -124,4 +124,10 @@ public class GameController {
     public ResponseEntity<List<GameRepository.RankingpointsStat>> getRankingPointsLast10Games() {
         return new ResponseEntity<>(gameService.getRankingPointsLast10GamesResponse(), HttpStatus.OK);
     }
+    
+    @GetMapping("/stats/ranking-points-last-10-raw")
+    @Transactional(readOnly = true)
+    public ResponseEntity<List<GameRepository.RankingpointsStat>> getRankingpointsOfLast10GameOfPlayer() {
+        return new ResponseEntity<>(gameService.getRankingpointsOfLast10GameOfPlayer(), HttpStatus.OK);
+    }
 }

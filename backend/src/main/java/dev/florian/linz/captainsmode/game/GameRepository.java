@@ -168,7 +168,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
              ranked AS (
                  SELECT
                      s.*,
-                     DENSE_RANK() OVER (PARTITION BY s.game_id ORDER BY s.score DESC) - 1 AS rnk
+                     RANK() OVER (PARTITION BY s.game_id ORDER BY s.score DESC) - 1 AS rnk
                  FROM scored s
              ),
              with_points AS (
@@ -222,7 +222,7 @@ public interface GameRepository extends JpaRepository<Game, Long> {
              ranked AS (
                  SELECT
                      s.*,
-                     DENSE_RANK() OVER (PARTITION BY s.game_id ORDER BY s.score DESC) - 1 AS rnk
+                     RANK() OVER (PARTITION BY s.game_id ORDER BY s.score DESC) - 1 AS rnk
                  FROM scored s
              ),
              with_points AS (
@@ -265,6 +265,63 @@ public interface GameRepository extends JpaRepository<Game, Long> {
     nativeQuery = true)
     List<RankingpointsStat> getRankingpointsPerLast10GameOfPlayer();
 
+    @Query(value = """
+        WITH last_games AS (
+            SELECT DISTINCT id, number
+            FROM games
+            ORDER BY number DESC
+            LIMIT 10
+        ),
+        scored AS (
+            SELECT
+                gp.game_id,
+                gp.player_id,
+                gp.kills - gp.deaths + gp.assists / 2.0 AS score
+            FROM game_participation gp
+            JOIN last_games on gp.game_id = last_games.id
+            WHERE gp.player_id <> 1 -- exclude enemies
+        ),
+             ranked AS (
+                 SELECT
+                     s.*,
+                     RANK() OVER (PARTITION BY s.game_id ORDER BY s.score DESC) - 1 AS rnk
+                 FROM scored s
+             ),
+             with_points AS (
+                 SELECT
+                     r.*,
+                     CASE r.rnk
+                         WHEN 0 THEN 2
+                         WHEN 1 THEN 1
+                         WHEN 2 THEN 0
+                         WHEN 3 THEN -1
+                         WHEN 4 THEN -2
+                         END AS points
+                 FROM ranked r
+             ),
+             all_points AS (
+                 -- every game × every player (so missing participations show up as 0)
+                 SELECT
+                     g.id AS game_id,
+                     g.number AS game_number,
+                     p.id AS player_id,
+                     COALESCE(wp.points, 0) AS points
+                 FROM last_games g
+                          CROSS JOIN players p
+                          LEFT JOIN with_points wp
+                                    ON wp.game_id = g.id AND wp.player_id = p.id
+                 WHERE p.id <> 1  -- exclude the “enemy” player
+             )
+        SELECT
+            ap.game_number as number,
+            ap.player_id as player,
+            ap.points as rankingpoints
+        FROM all_points ap
+        ORDER BY ap.game_id, ap.player_id
+    """,
+        nativeQuery = true)
+    List<RankingpointsStat> getRankingpointsOfLast10GameOfPlayer();
+    
 
     interface StatWithNumber {
         String getName();

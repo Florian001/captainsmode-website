@@ -342,6 +342,10 @@ public class GameService extends BaseService {
         return gameRepository.getRankingpointsPerLast10GameOfPlayer();
     }
     
+    public List<GameRepository.RankingpointsStat> getRankingpointsOfLast10GameOfPlayer() {
+        return gameRepository.getRankingpointsOfLast10GameOfPlayer();
+    }
+    
     private List<GetStatsResponse> getCSStats(LocalDate dateFrom, LocalDate dateTo) {
         return null;
     }
