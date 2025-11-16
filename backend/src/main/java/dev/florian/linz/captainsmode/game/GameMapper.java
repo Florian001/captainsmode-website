@@ -190,19 +190,15 @@ public class GameMapper {
 
 
     public void mapGame(Game newGame, GameResponse apiResponse) {
-        boolean winAlreadySet = false;
         int enemyCount = 0;
         newGame.setMatchId(apiResponse.metadata().matchId());
         newGame.setDate(mapLongToLocalDateTime(apiResponse.info().gameCreation()));
         newGame.setDurationInSeconds(apiResponse.info().gameDuration());
+        newGame.setWin(extractWin(apiResponse.info().participants()));
         for (GameParticipationResponse response : apiResponse.info().participants()) {
             GameParticipation participation = new GameParticipation();
             mapGameParticipation(participation, response);
-            Player player = mapPuuidToPlayer(response.puuid());
-            if (!player.getName().equals(ENEMY) && !winAlreadySet) {
-                newGame.setWin(response.win());
-                winAlreadySet = true;
-            }
+            Player player = mapPuuidToPlayer(response.puuid(), newGame.getWin() == response.win());
             if (player.getName().equals(ENEMY)) {
                 enemyCount++;
                 if (enemyCount > 5) {
@@ -214,9 +210,25 @@ public class GameMapper {
         }
     }
 
-    private Player mapPuuidToPlayer(String puuid) {
+    private Boolean extractWin(List<GameParticipationResponse> participants) {
+        for (GameParticipationResponse response : participants) {
+            Player player = mapPuuidToPlayer(response.puuid(), false);
+            if (!player.getName().equals(ENEMY) ) {
+                return response.win();
+            }
+        }
+        throw new IllegalStateException("Game full of enemies.");
+    }
+
+    private Player mapPuuidToPlayer(String puuid, boolean usePotentiallyWildcard) {
         Optional<Player> player = playerRepo.findPlayerByPuuid(puuid);
-        return player.orElseGet(() -> playerRepo.findPlayerByName(ENEMY).orElseThrow());
+        if (player.isPresent()) {
+            return player.get();
+        }
+        if (usePotentiallyWildcard) {
+            return playerRepo.findPlayerById(52L).orElseThrow();
+        }
+        return playerRepo.findPlayerByName(ENEMY).orElseThrow();
     }
 
     private static void mapGameParticipation(GameParticipation participation, GameParticipationResponse response) {
