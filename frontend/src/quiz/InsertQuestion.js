@@ -41,44 +41,43 @@ const InsertQuestion = () => {
     
     
         return (
-            // <div>
-            //     <h1>Frage hinzufügen</h1>
-            //     <form onSubmit={handleSubmit}>
-            //         <label>
-            //             Bitte trage hier die Frage ein: <br/>
-            //             <input
-            //                 type="text"
-            //                 value={inputQuestion}
-            //                 onChange={(e) => setInputQuestion(e.target.value)}
-            //                 placeholder="Frage"
-            //             />
-            //         </label>
-            //
-            //         <br/>
-            //
-            //         <label>
-            //             Bitte trage hier die Antwort ein: <br/>
-            //             <input
-            //                 type="text"
-            //                 value={inputCorrectAnswer}
-            //                 onChange={(e) => setInputCorrectAnswer(e.target.value)}
-            //                 placeholder="Antwort"
-            //             />
-            //         </label>
-            //         <br/>
-            //         <label>
-            //             Nummer: <br/>
-            //             <input
-            //                 type="string"
-            //                 value={inputNumber}
-            //                 onChange={(e) => setInputNumber(e.target.value)}
-            //                 placeholder="Nummer"
-            //             />
-            //         </label>
-            //         <button type="submit">Eintragen!</button>
-            //     </form>
-            // </div>
-            <h1>Das Weihnachtsquiz 2024 ist vorbei</h1>
+            <div>
+                <h1>Frage hinzufügen</h1>
+                <form onSubmit={handleSubmit}>
+                    <label>
+                        Bitte trage hier die Frage ein: <br/>
+                        <input
+                            type="text"
+                            value={inputQuestion}
+                            onChange={(e) => setInputQuestion(e.target.value)}
+                            placeholder="Frage"
+                        />
+                    </label>
+
+                    <br/>
+
+                    <label>
+                        Bitte trage hier die Antwort ein: <br/>
+                        <input
+                            type="text"
+                            value={inputCorrectAnswer}
+                            onChange={(e) => setInputCorrectAnswer(e.target.value)}
+                            placeholder="Antwort"
+                        />
+                    </label>
+                    <br/>
+                    <label>
+                        Nummer: <br/>
+                        <input
+                            type="string"
+                            value={inputNumber}
+                            onChange={(e) => setInputNumber(e.target.value)}
+                            placeholder="Nummer"
+                        />
+                    </label>
+                    <button type="submit">Eintragen!</button>
+                </form>
+            </div>
         );
 
 }
