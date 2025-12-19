@@ -13,6 +13,7 @@ const InsertAnswer = () => {
     const [correctAnswer, setCorrectAnswer] = useState("");
     const [trigger, setTrigger] = useState(false);
     const [points, setPoints] = useState([]);
+    const [fetchAnswersTrigger, setFetchAnswersTrigger] = useState(false);
 
     // const fetchEverything = async () => {
     //     try {
@@ -38,10 +39,10 @@ const InsertAnswer = () => {
     //     console.log("Hier"); // Logs after `everything` has been updated
     //     console.log(everything); // Logs after `everything` has been updated
     // }, [everything]);
-    
+
     const fetchCurrentQuestion = async () => {
         try {
-            
+
             const questionResponse = await fetch(baseUrl + 'api/v1/quiz/question', {
                 method: "get",
                 headers: new Headers({
@@ -51,11 +52,11 @@ const InsertAnswer = () => {
             const questionData = await questionResponse.json();
             setQuestion(questionData);
             fetchParticipantAnswers(questionData.number);
-            
+
         } catch (error) {
             setQuestion(null);
             console.error('Error fetching question:', error);
-        } 
+        }
     };
 
     const fetchParticipants = async () => {
@@ -90,12 +91,12 @@ const InsertAnswer = () => {
                 setPoints((prevPoints) => ({
                         ...prevPoints,
                         [item.name]: item.points}
-            ))));
+                ))));
         } catch (error) {
             console.error('Error fetching participants:', error);
         }
     };
-    
+
 
     useEffect(() => {
         fetchCurrentQuestion();
@@ -106,7 +107,13 @@ const InsertAnswer = () => {
     useEffect(() => {
         fetchCurrentQuestion();
     }, [number]);
-    
+
+    useEffect(() => {
+        fetchParticipantAnswers(number);
+    }, [fetchAnswersTrigger]);
+
+
+
     const nextQuestion = async (number) => {
         const url = baseUrl + `api/v1/quiz/question/${number}`;
         console.log("Trying PUT on " + url);
@@ -133,7 +140,7 @@ const InsertAnswer = () => {
             participant: name,
             points: point,
         }));
-        
+
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -151,11 +158,11 @@ const InsertAnswer = () => {
             console.error('Error posting points', error);
         }
     };
-    
+
     const toggleTrigger = () => {
         setTrigger(!trigger);
     }
-    
+
     const handleNextQuestionClick = async () => {
         await nextQuestion(question.number + 1);
         toggleTrigger();
@@ -178,13 +185,13 @@ const InsertAnswer = () => {
         // setCorrectAnswer(everything[newNumber-1].correctAnswer);
         // setAnswers(everything[newNumber-1].playerAnswers);
     };
-    
+
     const handleSubmitPointsClick = async () => {
         await submitPoints(question.number);
         toggleTrigger();
         // window.location.reload();
     };
-    
+
     const handleCorrectAnswerClick = async () => {
         if (correctAnswer) {
             setCorrectAnswer("");
@@ -192,9 +199,13 @@ const InsertAnswer = () => {
             setCorrectAnswer(question.correctAnswer);
         }
     };
-    
-    
-    
+
+    const handleTriggerParticipantAnswersClick = async () => {
+        setFetchAnswersTrigger(!fetchAnswersTrigger);
+    };
+
+
+
     const handleCloseQuestionClick = async () => {
         window.location.reload();
     };
@@ -214,76 +225,77 @@ const InsertAnswer = () => {
             [name]: Math.max(prevPoints[name] - 1, 0), // Prevent negative points
         }));
     };
-    
-    
-        if (question === null) {
-            return <div>
-                Lädt
-            </div>
-        } else if (participants === null) {
-            return <div>
-                Lädt
-            </div>
-        } else if (answers === null) {
-            return <div>
-                Lädt
-            </div>
-        } else {
-            return <div>
-                <h1>Frage Nummer {number} von 14</h1>
-                <h2>{question.question}</h2>
-                <button onClick={handlePreviousQuestionClick} style={{margin: '8px'}}>Vorherige Frage</button>
-                <button onClick={handleNextQuestionClick} style={{margin: '8px'}}>Nächste Frage</button>
-                <button onClick={handleCorrectAnswerClick} style={{margin: '8px'}}>Toggle Auflösung</button>
-
-                {correctAnswer.length > 0 && <h3 style={{marginBottom: '16px'}}>Auflösung</h3> &&
-                    <div dangerouslySetInnerHTML={{__html: correctAnswer}}/>}
 
 
-                {answers.length > 0 && <h3 style={{marginBottom: '16px'}}>Antworten</h3>}
-                <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
-                    {answers.map((item, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                border: '1px solid #ccc',
-                                padding: '10px',
-                                borderRadius: '8px',
-                                width: '150px',
-                                textAlign: 'center',
-                            }}
-                        >
-                            <h3>{item.name}</h3>
-                            <p>{item.answer}</p>
-                            <p> +{points[item.name]} Punkte</p>
-                            <button onClick={() => decrementPoints(item.name)}>-</button>
-                            <button onClick={() => incrementPoints(item.name)}>+</button>
-                        </div>
-                    ))}
-                </div>
-                <button onClick={handleSubmitPointsClick} style={{margin: '8px'}}>Punkte eintragen</button>
-                {participants.length > 0 && <h3 style={{marginBottom: '16px'}}>Punkte</h3>}
-                <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
-                    {/* Render a box for each data item */}
-                    {participants.map((item, index) => (
-                        <div
-                            key={index}
-                            style={{
-                                border: '1px solid #ccc',
-                                padding: '10px',
-                                borderRadius: '8px',
-                                width: '150px',
-                                textAlign: 'center',
-                            }}
-                        >
-                            <h3>{item.name}</h3>
-                            <p>Punkte: {item.points}</p>
-                        </div>
-                    ))}
-                </div>
+    if (question === null) {
+        return <div>
+            Lädt
+        </div>
+    } else if (participants === null) {
+        return <div>
+            Lädt
+        </div>
+    } else if (answers === null) {
+        return <div>
+            Lädt
+        </div>
+    } else {
+        return <div>
+            <h1>Frage Nummer {number} von 14</h1>
+            <h2>{question.question}</h2>
+            <button onClick={handlePreviousQuestionClick} style={{margin: '8px'}}>Vorherige Frage</button>
+            <button onClick={handleNextQuestionClick} style={{margin: '8px'}}>Nächste Frage</button>
+            <button onClick={handleTriggerParticipantAnswersClick} style={{margin: '8px'}}>Zeige Antworten</button>
+            <button onClick={handleCorrectAnswerClick} style={{margin: '8px'}}>Toggle Auflösung</button>
 
+            {correctAnswer.length > 0 && <h3 style={{marginBottom: '16px'}}>Auflösung</h3> &&
+                <div dangerouslySetInnerHTML={{__html: correctAnswer}}/>}
+
+
+            {answers.length > 0 && <h3 style={{marginBottom: '16px'}}>Antworten</h3>}
+            <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+                {answers.map((item, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            border: '1px solid #ccc',
+                            padding: '10px',
+                            borderRadius: '8px',
+                            width: '150px',
+                            textAlign: 'center',
+                        }}
+                    >
+                        <h3>{item.name}</h3>
+                        <p>{item.answer}</p>
+                        <p> +{points[item.name]} Punkte</p>
+                        <button onClick={() => decrementPoints(item.name)}>-</button>
+                        <button onClick={() => incrementPoints(item.name)}>+</button>
+                    </div>
+                ))}
             </div>
-        }
+            <button onClick={handleSubmitPointsClick} style={{margin: '8px'}}>Punkte eintragen</button>
+            {participants.length > 0 && <h3 style={{marginBottom: '16px'}}>Punkte</h3>}
+            <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+                {/* Render a box for each data item */}
+                {participants.map((item, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            border: '1px solid #ccc',
+                            padding: '10px',
+                            borderRadius: '8px',
+                            width: '150px',
+                            textAlign: 'center',
+                        }}
+                    >
+                        <h3>{item.name}</h3>
+                        <p>Punkte: {item.points}</p>
+                    </div>
+                ))}
+            </div>
+
+        </div>
+    }
 }
 
 export default InsertAnswer;
