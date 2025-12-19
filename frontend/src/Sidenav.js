@@ -26,8 +26,8 @@ const Sidenav = () => {
         <div className="sidenav">
             <div className="small-news-banner">
                 <div className="small-news-text">
-                    {/*🚨Bei dem Weihnachtsquiz 2024 hat Obleute Gaming Fan Katja mit sagenhaften 24 Punkten den dritten*/}
-                    {/*Platz erreichen können!🚨*/}
+                    🚨Bei dem Weihnachtsquiz 2024 hat Obleute Gaming Fan Katja mit sagenhaften 24 Punkten den dritten
+                    Platz erreichen können!🚨
                     Save the date: Die Obleute Gaming Weihnachtsfeier 2025 findet am 20.12.2025 statt!
                 </div>
             </div>
@@ -49,7 +49,7 @@ const Sidenav = () => {
                         </div>
                     )}
                 </div>
-                <Link to="/quiz">Weihnachtsquiz 2024</Link>
+                {/*<Link to="/quiz">Weihnachtsquiz 2024</Link>*/}
                 <Link to="/settings">Einstellungen</Link>
                 <Link to="/patch-notes">Patch Notes</Link>
             </div>

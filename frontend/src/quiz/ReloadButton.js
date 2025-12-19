@@ -8,7 +8,7 @@ function ReloadButton() {
 
     return (
         <button onClick={reloadPage} style={{ padding: '5px', fontSize: '14px' }}>
-            🔄 Reload
+            Nächste Frage angezeigt? Dann hier klicken!
         </button>
     );
 }

@@ -8,6 +8,8 @@ const InsertAnswer = () => {
     const [name, setName] = useState(localStorage.getItem('quiz_name'));
     const [question, setQuestion] = useState(null);
     const [answer, setAnswer] = useState("");
+    const [hasAnswered, setHasAnswered] = useState(false);
+    const [yourAnswer, setYourAnswer] = useState("");
     
     const fetchCurrentQuestion = async () => {
         try {
@@ -77,36 +79,33 @@ const InsertAnswer = () => {
     
     const handleAnswerSubmit = (e) => {
         insertAnswer(answer);
+        setHasAnswered(true);
+        setYourAnswer(answer);
     };
     
     if (name) {
+        if (question === null) {
+            return <div>
+                <h1> Hallo {name} </h1>
+                <h2> Es ist keine Frage zur Zeit ausgewählt</h2>
+                <ReloadButton/>
+            </div>
+        }
         return <div>
-                     <h1> Hallo {name} </h1>
-                     <h2> Das Weihnachtsquiz 2024 ist vorbei!</h2>
-                     <ReloadButton/>
+            <h1> Hallo {name} </h1>
+            <h2>Frage Nummer {question.number}</h2>
+            <h3> {question.question}</h3>
+            <label>
+                <input
+                    type="text"
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    placeholder="Antwort"
+                />
+                <button onClick={handleAnswerSubmit}>Abschicken!</button>
+            </label>
+            {hasAnswered && <div><p>{yourAnswer} wurde abgeschickt!</p> <ReloadButton/></div>}
         </div>
-        // if (question === null) {
-        //     return <div>
-        //         <h1> Hallo {name} </h1>
-        //         <h2> Es ist keine Frage zur Zeit ausgewählt</h2>
-        //         <ReloadButton/>
-        //     </div>
-        // }
-        // return <div>
-        //     <h1> Hallo {name} </h1>
-        //     <h2>Frage Nummer {question.number}</h2>
-        //     <h3> {question.question}</h3>
-        //     <label>
-        //         <input
-        //             type="text"
-        //             value={answer}
-        //             onChange={(e) => setAnswer(e.target.value)}
-        //             placeholder="Antwort"
-        //         />
-        //         <button onClick={handleAnswerSubmit}>Abschicken!</button>
-        //     </label>
-        //     <ReloadButton/>
-        // </div>
     } else {
         return (
             <div>
