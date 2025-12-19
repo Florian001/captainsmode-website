@@ -51,6 +51,7 @@ const InsertAnswer = () => {
             });
             const questionData = await questionResponse.json();
             setQuestion(questionData);
+            setNumber(setNumber.number)
             fetchParticipantAnswers(questionData.number);
 
         } catch (error) {
