@@ -243,9 +243,7 @@ const InsertAnswer = () => {
     } else {
         return <div>
             <h1>Frage Nummer {number} von 14</h1>
-            <div className="question-title">
-                {question.question}
-            </div>
+            <div className="question-title" dangerouslySetInnerHTML={{__html: question.question}}/>
             <button onClick={handlePreviousQuestionClick} style={{margin: '8px'}}>Vorherige Frage</button>
             <button onClick={handleNextQuestionClick} style={{margin: '8px'}}>Nächste Frage</button>
             <button onClick={handleTriggerParticipantAnswersClick} style={{margin: '8px'}}>Zeige Antworten</button>
