@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  backend:
+    image: my-backend:1.23
+    container_name: backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    expose:
+      - "8080"
+
+  frontend:
+    image: my-frontend:1.0
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
