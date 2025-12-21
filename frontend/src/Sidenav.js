@@ -28,7 +28,7 @@ const Sidenav = () => {
                 <div className="small-news-text">
                     🚨Bei dem Weihnachtsquiz 2025 hat Obleute Gaming Fan Katja mit sagenhaften 57 Punkten den dritten
                     Platz erreichen können!🚨
-                    Save the date: Die Obleute Gaming Weihnachtsfeier 2026 findet am 19.12.2025 statt!
+                    Save the date: Die Obleute Gaming Weihnachtsfeier 2026 findet am 19.12.2026 statt!
                 </div>
             </div>
             <div>
