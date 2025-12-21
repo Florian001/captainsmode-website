@@ -269,8 +269,9 @@ const InsertAnswer = () => {
                         <h3>{item.name}</h3>
                         <p>{item.answer}</p>
                         <p> +{points[item.name]} Punkte</p>
-                        <button onClick={() => decrementPoints(item.name)}>-</button>
-                        <button onClick={() => incrementPoints(item.name)}>+</button>
+                        {/*Outcomment these two lines for 2026 quiz*/}
+                        {/*<button onClick={() => decrementPoints(item.name)}>-</button>*/}
+                        {/*<button onClick={() => incrementPoints(item.name)}>+</button>*/}
                     </div>
                 ))}
             </div>

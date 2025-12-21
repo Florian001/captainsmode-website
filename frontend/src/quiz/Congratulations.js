@@ -28,8 +28,9 @@ const Congratulations = ({ name, points }) => {
     return (
         <div className="congratulations-banner">
             <div className="congratulations-content">
-                Weihnachtsquiz 2024 Gewinner: <br/>
-                {bestPlayer.name} - {bestPlayer.points} Punkte
+                Weihnachtsquiz 2025 Gewinner: <br/>
+                {/*{bestPlayer.name} - {bestPlayer.points} Punkte*/}
+                Drop table users; und FortifyRevive - 65 Punkte
                 <br/>
                 GG WP!
             </div>
