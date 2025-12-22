@@ -1,18 +1,38 @@
 services:
-  backend:
-    image: my-backend:1.23
-    container_name: backend
+  postgres:
+    image: postgres:16
+    container_name: postgres
     restart: unless-stopped
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-    expose:
-      - "8080"
+      POSTGRES_DB: captainsmode_db
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  
+  backend:
+    image: cm-backend:2.00
+    container_name: backend
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/captainsmode_db
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
   frontend:
-    image: my-frontend:1.23
+    image: cm-frontend:2.00
     container_name: frontend
     restart: unless-stopped
     ports:
       - "8081:80"
     depends_on:
       - backend
+    
+volumes:
+  postgres_data:    
+        
+
